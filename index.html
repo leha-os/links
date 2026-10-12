@@ -91,7 +91,7 @@ async function scanAll(){
  await renderRepos(repos);
 }
 async function renderRepos(repos){
- let filter=($?.value||'').toLowerCase();
+ let filter=document.getElementById('search').value.toLowerCase();
  let out=$('#out'); if(!out) return;
  out.innerHTML=''; allLinks=[];
  for(let repo of repos){
@@ -99,57 +99,90 @@ async function renderRepos(repos){
    let root=await fetchContents(user, repo.name,'');
    let htmlFiles=root.filter(f=>f.type==='file' && f.name.toLowerCase().endsWith('.html'));
    let folders=root.filter(f=>f.type==='dir');
-   let repoLinks=[];
+   let grouped={}; // folder -> links
+   grouped['/']=[];
    htmlFiles.forEach(f=>{
      let pub=f.name.toLowerCase()=='index.html'?`https://${user}.github.io/${repo.name}/`:`https://${user}.github.io/${repo.name}/${f.name}`;
      if(!filter || f.name.toLowerCase().includes(filter) || repo.name.toLowerCase().includes(filter)){
-       repoLinks.push({label:f.name, path:`${repo.name}/${f.name}`, url:pub, key:`${repo.name}/${f.name}`});
+       grouped['/'].push({label:f.name, path:`${repo.name}/${f.name}`, url:pub, key:`${repo.name}/${f.name}`});
        allLinks.push(pub);
      }
    });
    for(let folder of folders){
      let sub=await fetchContents(user, repo.name, folder.path);
      let subHtml=sub.filter(s=>s.type==='file' && s.name.toLowerCase().endsWith('.html'));
+     if(!grouped[folder.path]) grouped[folder.path]=[];
      subHtml.forEach(file=>{
        let pub=file.name.toLowerCase()=='index.html'?`https://${user}.github.io/${repo.name}/${folder.path}/`:`https://${user}.github.io/${repo.name}/${folder.path}/${file.name}`;
        if(!filter || `${folder.path}/${file.name}`.toLowerCase().includes(filter) || repo.name.toLowerCase().includes(filter)){
-         repoLinks.push({label:`${folder.path}/${file.name}`, path:`${repo.name}/${folder.path}/${file.name}`, url:pub, key:`${repo.name}/${folder.path}/${file.name}`});
+         grouped[folder.path].push({label:file.name, path:`${repo.name}/${folder.path}/${file.name}`, url:pub, key:`${repo.name}/${folder.path}/${file.name}`});
          allLinks.push(pub);
        }
      });
    }
-   if(repoLinks.length===0 && filter) continue;
+   // remove empty groups
+   let folderNames=Object.keys(grouped).filter(k=>grouped[k].length>0);
+   if(folderNames.length===0 && filter) continue;
 
    let displayRepoName = customNames[repo.name] || repo.name;
    let section=document.createElement('div');
    section.className='border-b border-[#d0d7de] last:border-0';
-   let isCollapsed = localStorage.getItem('collapsed_'+repo.name)==='1';
+   let isRepoCollapsed = localStorage.getItem('collapsed_'+repo.name);
+   if(isRepoCollapsed===null) isRepoCollapsed='1'; // default collapsed to folder level
+   let repoCollapsed = isRepoCollapsed==='1';
+   let totalFiles = folderNames.reduce((s,k)=>s+grouped[k].length,0);
+
+   let foldersHtml = folderNames.map(folder=>{
+     let files=grouped[folder];
+     let folderKey = repo.name+'::'+folder;
+     let isFolderCollapsed = localStorage.getItem('collapsed_folder_'+folderKey);
+     if(isFolderCollapsed===null) isFolderCollapsed='1'; // default collapsed
+     let fCollapsed = isFolderCollapsed==='1';
+     let icon = folder==='/' ? '📄' : '📁';
+     let folderLabel = folder==='/' ? '(root)' : folder;
+     let displayFolder = customNames[folderKey] || folderLabel;
+     return `
+     <div class="folder-group border-t border-[#eaeef2]">
+       <div class="flex items-center gap-2 px-4 py-1.5 bg-white hover:bg-[#f6f8fa] cursor-pointer select-none pl-8" onclick="toggleFolder('${folderKey.replace(/'/g, "\'")}')">
+         <span class="text-[11px]">${fCollapsed?'▸':'▾'}</span>
+         <span class="text-[13px]">${folder==='/'?'🗂️':'📁'}</span>
+         <span class="text-[12px] font-medium text-[#24292f]" ondblclick="event.stopPropagation(); renameFolder('${folderKey.replace(/'/g, "\'")}')">${displayFolder}</span>
+         <span class="text-[10px] text-[#8b949e]">${files.length} files</span>
+         <span class="ml-auto text-[10px] text-[#8b949e] truncate">${repo.name}/${folder==='/'?'':folder}</span>
+       </div>
+       <div class="folder-body ${fCollapsed?'hidden':''}" id="folder-${CSS.escape(folderKey)}">
+         ${files.map(l=>{
+           let dName = customNames[l.key] || l.label;
+           return `
+           <div class="file-row flex items-center justify-between pl-12 pr-3 py-1.5 text-[12px] group border-t border-[#f6f8fa]">
+             <div class="flex items-center gap-2 min-w-0 flex-1">
+               <span class="text-[11px] text-[#8b949e]">↳</span>
+               <span class="truncate" title="${l.path}" ondblclick="renameFile('${l.key}')" >${dName}</span>
+               ${l.label.match(/v\d+\.html/i)?'<span class="text-[10px] bg-[#ddf4ff] text-[#0969da] px-1 rounded-full">v</span>':''}
+             </div>
+             <div class="flex items-center gap-1.5">
+               <a href="${l.url}" target="_blank" class="text-[11px] bg-[#0d1117] text-white px-2.5 py-0.5 rounded-md hover:bg-black">OPEN</a>
+               <button onclick="copyLink('${l.url}')" class="text-[11px] border border-[#d0d7de] bg-white px-2 py-0.5 rounded-md hover:bg-[#f6f8fa]">Copy</button>
+               <button onclick="renameFile('${l.key}')" class="text-[11px] text-[#8b949e] hover:text-[#24292f] opacity-0 group-hover:opacity-100">✎</button>
+             </div>
+           </div>
+           `;
+         }).join('')}
+       </div>
+     </div>
+     `;
+   }).join('');
+
    section.innerHTML=`
      <div class="repo-header px-3 py-2 bg-[#f6f8fa] flex items-center gap-2 cursor-pointer select-none" onclick="toggleRepo('${repo.name}')">
-       <span class="text-[12px]">${isCollapsed?'▸':'▾'}</span>
-       <span class="font-semibold text-[13px] text-[#0969da] hover:underline" title="Click to rename" ondblclick="event.stopPropagation(); renameRepo('${repo.name}')">${displayRepoName}</span>
+       <span class="text-[12px]">${repoCollapsed?'▸':'▾'}</span>
+       <span class="font-semibold text-[13px] text-[#0969da] hover:underline" title="Double click to rename" ondblclick="event.stopPropagation(); renameRepo('${repo.name}')">${displayRepoName}</span>
        ${repo.private?'<span class="text-[10px] border border-[#d0d7de] rounded-full px-1.5">private</span>':''}
-       <span class="text-[11px] text-[#57606a] ml-1">${repoLinks.length} files</span>
+       <span class="text-[11px] text-[#57606a] ml-1">${totalFiles} files in ${folderNames.length} folders</span>
        <a href="https://${user}.github.io/${repo.name}/" target="_blank" class="ml-auto text-[11px] text-[#57606a] hover:text-[#0969da]" onclick="event.stopPropagation()">/${repo.name}/ →</a>
      </div>
-     <div class="repo-body ${isCollapsed?'hidden':''}" id="body-${repo.name}">
-       ${repoLinks.map(l=>{
-         let dName = customNames[l.key] || l.label;
-         return `
-         <div class="file-row flex items-center justify-between pl-8 pr-3 py-1.5 text-[12px] group">
-           <div class="flex items-center gap-2 min-w-0 flex-1">
-             <span class="w-[2px] h-3 bg-[#d0d7de]"></span>
-             <span class="truncate" title="${l.path}" ondblclick="renameFile('${l.key}')" >${dName}</span>
-             ${l.label.match(/v\d+\.html/i)?'<span class="text-[10px] bg-[#ddf4ff] text-[#0969da] px-1 rounded-full">v</span>':''}
-           </div>
-           <div class="flex items-center gap-1.5">
-             <a href="${l.url}" target="_blank" class="text-[11px] bg-[#0d1117] text-white px-2.5 py-0.5 rounded-md hover:bg-black">OPEN</a>
-             <button onclick="copyLink('${l.url}')" class="text-[11px] border border-[#d0d7de] bg-white px-2 py-0.5 rounded-md hover:bg-[#f6f8fa]">Copy</button>
-             <button onclick="renameFile('${l.key}')" class="text-[11px] text-[#8b949e] hover:text-[#24292f] opacity-0 group-hover:opacity-100">✎</button>
-           </div>
-         </div>
-         `;
-       }).join('') || `<div class="pl-8 pr-3 py-2 text-[11px] text-[#8b949e]">No HTML files</div>`}
+     <div class="repo-body ${repoCollapsed?'hidden':''}" id="body-${repo.name}">
+       ${foldersHtml || `<div class="pl-8 pr-3 py-2 text-[11px] text-[#8b949e]">No HTML files</div>`}
      </div>
    `;
    out.appendChild(section);
@@ -176,6 +209,23 @@ function renameRepo(repo){
  let nv=prompt('Rename repo display name:', cur);
  if(nv && nv.trim()){
    customNames[repo]=nv.trim();
+   localStorage.setItem('customNames', JSON.stringify(customNames));
+   renderRepos(reposCache);
+ }
+}
+function toggleFolder(key){
+ let id='folder-'+CSS.escape(key);
+ let body=document.getElementById(id);
+ if(!body) return;
+ let isHidden=body.classList.contains('hidden');
+ body.classList.toggle('hidden');
+ localStorage.setItem('collapsed_folder_'+key, isHidden?'0':'1');
+}
+function renameFolder(key){
+ let cur=customNames[key]||key.split('::').pop();
+ let nv=prompt('Rename folder display name:', cur);
+ if(nv && nv.trim()){
+   customNames[key]=nv.trim();
    localStorage.setItem('customNames', JSON.stringify(customNames));
    renderRepos(reposCache);
  }
