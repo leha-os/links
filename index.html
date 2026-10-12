@@ -430,21 +430,19 @@ async function customPrompt(msg, def, placeholder){
 }
 
 
+
+
 async function moveFolder(repoName, folderPath){
- let token=localStorage.getItem('gh_token'); if(!token){ await showCustomModal({title:'Thiếu token', msg:'Cần token'}); return; }
+ let token=localStorage.getItem('gh_token'); if(!token){ await showCustomModal({title:'Thiếu token', msg:'Cần token có quyền repo'}); return; }
  let displayPath = folderPath==='' ? '(root)' : folderPath;
- const confirmMove = await customConfirm(`Di chuyển cả folder "${displayPath}" trong repo "${repoName}"?\nSẽ di chuyển tất cả file bên trong kể cả folder con của con.`, `Move folder ${displayPath}`);
- if(!confirmMove) return;
- let cache=loadCache();
- if(!cache){ await showCustomModal({title:'Chưa có cache', msg:'Bấm Sync now trước'}); return; }
+ const cache=loadCache();
+ if(!cache){ await showCustomModal({title:'Chưa có cache', msg:'Bấm Sync now trước để load cache'}); return; }
  let groupedByRepo = cache.groupedData;
  let grouped = groupedByRepo[repoName];
- if(!grouped){ return; }
- // Collect all files under this folder (including nested)
+ if(!grouped){ await showCustomModal({title:'Lỗi', msg:'Không tìm thấy repo trong cache'}); return; }
  let filesToMove=[];
  for(let key of Object.keys(grouped)){
-   if(folderPath==='' ){
-     // root: only move files in root? For root we ask user to specify? We'll move only root files
+   if(folderPath===''){
      if(key==='') filesToMove.push(...grouped[key]);
    } else {
      if(key===folderPath || key.startsWith(folderPath+'/')){
@@ -452,28 +450,24 @@ async function moveFolder(repoName, folderPath){
      }
    }
  }
- if(!filesToMove.length){ await showCustomModal({title:'Trống', msg:'Folder này không có file HTML nào'}); return; }
-
+ if(!filesToMove.length){ await showCustomModal({title:'Trống', msg:`Folder "${displayPath}" không có file HTML nào`}); return; }
+ const confirmMove = await customConfirm(`Di chuyển cả folder "${displayPath}" (${filesToMove.length} files) sang chỗ khác? Sẽ giữ cấu trúc con bên trong.`, `Move folder ${displayPath}`);
+ if(!confirmMove) return;
  let newRepo = await customPrompt(`Di chuyển ${filesToMove.length} file từ folder "${displayPath}"\nNhập repo đích (để trống = giữ nguyên repo ${repoName}):`, repoName, 'repo đích');
  if(newRepo===null) return;
  if(!newRepo) newRepo=repoName;
-
- let targetFolder = await customPrompt(`Nhập folder đích mới (ví dụ: lab-moi/ hoặc archive/2024/):`, folderPath, 'folder đích');
+ let targetFolder = await customPrompt(`Nhập folder đích mới (VD: lab-moi/ , archive/2024/ , để trống = root):`, folderPath, 'folder đích mới');
  if(targetFolder===null) return;
- targetFolder = targetFolder.trim().replace(/^\/+|\/+$/g,''); // trim slashes
-
- const ok = await showCustomModal({title:`Move folder ${displayPath} → ${targetFolder||'(root)'}`, msg:`Di chuyển ${filesToMove.length} file từ "${repoName}/${displayPath}" sang "${newRepo}/${targetFolder||'(root)'}".\nGiữ cấu trúc con bên trong.`, okText:'Move folder', danger:false});
+ targetFolder = targetFolder.trim().replace(/^\/+|\/+$/g,'');
+ const ok = await showCustomModal({title:`Move folder → ${targetFolder||'(root)'}`, msg:`Di chuyển ${filesToMove.length} file từ "${repoName}/${displayPath}" sang "${newRepo}/${targetFolder||'(root)'}".`, okText:'Move folder'});
  if(!ok) return;
-
  document.getElementById('syncStatus').innerText=`moving folder ${filesToMove.length} files...`;
  let moved=0, failed=0;
  for(let file of filesToMove){
-   // compute relative path from source folder
    let relPath;
    if(folderPath===''){
-     relPath = file.filePath; // already root file name
+     relPath = file.filePath;
    } else {
-     // file.filePath is like "lab/sub/file.html" -> relative is sub/file.html or file.html
      if(file.filePath===folderPath) relPath = file.filePath.split('/').pop();
      else if(file.filePath.startsWith(folderPath+'/')) relPath = file.filePath.substring(folderPath.length+1);
      else relPath = file.filePath;
@@ -490,7 +484,6 @@ async function moveFolder(repoName, folderPath){
        body: JSON.stringify({message:`Move folder ${displayPath}: ${file.filePath} -> ${destPath}`, content: srcData.content})
      });
      if(!createRes.ok){ failed++; continue; }
-     // delete source if different
      if(newRepo!==file.repo || destPath!==file.filePath){
        await fetch(`https://api.github.com/repos/leha-os/${file.repo}/contents/${file.filePathFull||file.filePath}`,{
          method:'DELETE',
@@ -502,7 +495,7 @@ async function moveFolder(repoName, folderPath){
      document.getElementById('syncStatus').innerText=`moving ${moved}/${filesToMove.length}...`;
    }catch(e){ failed++; }
  }
- await showCustomModal({title:'Xong', msg:`Đã di chuyển ${moved} file, lỗi ${failed} file.`, okText:'OK'});
+ await showCustomModal({title:'Xong', msg:`Đã di chuyển ${moved} file, lỗi ${failed} file.`});
  scanAll(true);
 }
 
