@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LEHA Repo</title>
+<title>LEHA Repo - Links Manager</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; font-size:15px}
@@ -13,11 +13,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,san
 .file-row.selected{background:#fff8c5;border-left-color:#d4a72c}
 .dropdown{position:relative}
 .dropdown-menu{position:absolute;right:0;top:100%;margin-top:4px;background:white;border:1px solid #9ca3af;border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,0.12);z-index:20;min-width:180px;overflow:hidden}
-.dropdown-menu button{display:block;width:100%;text-align:left;padding:9px 13px;font-size:12px;}
+.dropdown-menu button{display:block;width:100%;text-align:left;padding:9px 13px;font-size:13px;}
 .dropdown-menu button:hover{background:#f6f8fa}
-.indent-1{padding-left:2rem}
-.indent-2{padding-left:3.5rem}
-.indent-3{padding-left:5rem}
 </style>
 </head>
 <body class="bg-white text-[#24292f] min-h-screen">
@@ -33,12 +30,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,san
 </div>
 
 <div id="lock" class="max-w-3xl mx-auto px-6 py-16">
-<div class="border border-[#9ca3af] rounded-md p-6">
+<div class="border-2 border-[#6b7280] rounded-lg p-6">
 <h2 class="text-[18px] font-semibold">🔒 Private access</h2>
 <p class="text-[15px] text-[#57606a] mt-2">PIN + token stay in your browser only.</p>
 <div class="mt-4 space-y-3">
-<input id="pin" type="password" placeholder="Set PIN" class="w-full max-w-sm border rounded-md px-3 py-2 text-[15px]">
-<input id="token" type="password" placeholder="GitHub token ghp_..." class="w-full max-w-sm border rounded-md px-3 py-2 text-[15px]">
+<input id="pin" type="password" placeholder="Set PIN" class="w-full max-w-sm border-2 border-[#6b7280] rounded-md px-3 py-2 text-[15px]">
+<input id="token" type="password" placeholder="GitHub token ghp_..." class="w-full max-w-sm border-2 border-[#6b7280] rounded-md px-3 py-2 text-[15px]">
 <button id="unlock" class="bg-[#2ea043] text-white text-[15px] font-medium px-4 py-2 rounded-md">Unlock</button>
 </div>
 </div>
@@ -48,20 +45,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,san
 <div class="max-w-[1100px] mx-auto px-4 py-4">
 <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
 <div class="flex items-center gap-2">
-<span id="count" class="hidden">0 links</span>
+<span class="text-[14px] font-medium text-[#57606a]">Links Manager - viền đậm, chữ to, quét folder con của con</span>
 </div>
 <div class="flex flex-wrap gap-2 items-center">
-<input id="search" placeholder="Filter..." class="border border-[#9ca3af] rounded-md px-3 py-1.5 text-[14px] w-36">
-<button id="collapseAllBtn" class="text-[13px] border bg-white px-3 py-1.5 rounded-md">Collapse all</button>
-<button id="openAllBtn" class="text-[13px] border bg-white px-3 py-1.5 rounded-md">Open all</button>
-<button id="scanBtn" class="text-[13px] border bg-[#f6f8fa] px-3 py-1.5 rounded-md">Sync now</button>
+<input id="search" placeholder="Filter..." class="border-2 border-[#6b7280] rounded-md px-3 py-1.5 text-[14px] w-40">
+<button id="collapseAllBtn" class="text-[13px] border-2 border-[#6b7280] bg-white px-3 py-1.5 rounded-md">Collapse all</button>
+<button id="openAllBtn" class="text-[13px] border-2 border-[#6b7280] bg-white px-3 py-1.5 rounded-md">Open all</button>
+<button id="scanBtn" class="text-[13px] border-2 border-[#6b7280] bg-[#f6f8fa] px-3 py-1.5 rounded-md font-medium">Sync now</button>
 </div>
 </div>
 
-<div id="bulkBar" class="hidden border border-[#d4a72c] bg-[#fff8c5] rounded-md px-3 py-2.5 mb-3 flex flex-wrap items-center gap-2 text-[14px]">
+<div id="bulkBar" class="hidden border-2 border-[#d4a72c] bg-[#fff8c5] rounded-lg px-3 py-2.5 mb-3 flex flex-wrap items-center gap-2 text-[14px]">
 <span id="bulkCount" class="font-medium">0 selected</span>
 <button onclick="moveSelected()" class="bg-[#0d1117] text-white px-3 py-1.5 rounded-md">Move</button>
-<button onclick="deleteSelected()" class="border bg-white px-3 py-1.5 rounded-md hover:bg-[#ffebe9]">Delete selected</button>
+<button onclick="deleteSelected()" class="border-2 border-[#6b7280] bg-white px-3 py-1.5 rounded-md hover:bg-[#ffebe9]">Delete selected</button>
 <button onclick="clearSelection()" class="text-[#57606a] px-2">Clear</button>
 </div>
 
@@ -71,37 +68,37 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,san
 
 <!-- Beautiful custom modal -->
 <div id="customModal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 z-[60]">
-  <div class="bg-white rounded-xl border-2 border-[#4b5563] shadow-xl w-full max-w-[400px] overflow-hidden">
+  <div class="bg-white rounded-xl border-2 border-[#4b5563] shadow-xl w-full max-w-[420px] overflow-hidden">
     <div class="px-5 pt-5 pb-3">
       <h3 id="customModalTitle" class="text-[16px] font-semibold text-[#24292f]">Xác nhận</h3>
-      <p id="customModalMsg" class="text-[15px] text-[#57606a] mt-2 leading-5">Bạn có chắc?</p>
+      <p id="customModalMsg" class="text-[15px] text-[#57606a] mt-2 leading-5 whitespace-pre-line">Bạn có chắc?</p>
       <div id="customModalInputWrap" class="hidden mt-3">
-        <input id="customModalInput" type="text" class="w-full border border-[#9ca3af] rounded-md px-3 py-2.5 text-[15px] focus:outline-none focus:border-[#0969da] focus:ring-1 focus:ring-[#0969da]" placeholder="">
+        <input id="customModalInput" type="text" class="w-full border-2 border-[#6b7280] rounded-md px-3 py-2.5 text-[15px] focus:outline-none focus:border-[#0969da] focus:ring-1 focus:ring-[#0969da]" placeholder="">
       </div>
     </div>
-    <div class="px-5 py-3 bg-[#f6f8fa] border-t flex justify-end gap-2">
-      <button id="customModalCancel" class="px-4 py-2 text-[14px] border bg-white rounded-md hover:bg-[#f6f8fa]">Hủy</button>
+    <div class="px-5 py-3 bg-[#f6f8fa] border-t-2 border-[#6b7280] flex justify-end gap-2">
+      <button id="customModalCancel" class="px-4 py-2 text-[14px] border-2 border-[#6b7280] bg-white rounded-md hover:bg-[#f6f8fa]">Hủy</button>
       <button id="customModalOk" class="px-4 py-2 text-[14px] bg-[#0d1117] text-white rounded-md hover:bg-black">OK</button>
     </div>
   </div>
 </div>
 
 <div id="editModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center p-2 z-50">
-  <div class="bg-white rounded-lg border w-full max-w-4xl max-h-[95vh] flex flex-col">
-    <div class="px-4 py-3 border-b flex justify-between items-center bg-[#f6f8fa] rounded-t-lg">
+  <div class="bg-white rounded-lg border-2 border-[#6b7280] w-full max-w-4xl max-h-[95vh] flex flex-col">
+    <div class="px-4 py-3 border-b-2 border-[#6b7280] flex justify-between items-center bg-[#f6f8fa] rounded-t-lg">
       <div><span id="editTitle" class="text-[15px] font-semibold">Edit</span><div id="editPath" class="text-[13px] text-[#57606a]"></div></div>
-      <button onclick="closeModal()" class="w-7 h-7 rounded-full hover:bg-[#9ca3af] flex items-center justify-center">✕</button>
+      <button onclick="closeModal()" class="w-8 h-8 rounded-full hover:bg-[#9ca3af] flex items-center justify-center text-[16px]">✕</button>
     </div>
-    <div class="px-4 py-3 border-b bg-[#fff8c5] flex flex-wrap gap-2 items-center text-[14px]">
+    <div class="px-4 py-3 border-b-2 border-[#6b7280] bg-[#fff8c5] flex flex-wrap gap-2 items-center text-[14px]">
       <span class="font-semibold">⚡</span>
       <button onclick="applyBGConfig()" class="bg-[#0d1117] text-white px-4 py-2 rounded-md font-medium">BG_CONFIG → Replace to</button>
-      <button onclick="applyHeroLogo()" class="bg-white border px-4 py-2 rounded-md">HERO_CONFIG → Replace to</button>
+      <button onclick="applyHeroLogo()" class="bg-white border-2 border-[#6b7280] px-4 py-2 rounded-md">HERO_CONFIG → Replace to</button>
     </div>
     <div class="p-3 flex-1 overflow-hidden flex flex-col">
-      <textarea id="editContent" class="w-full flex-1 min-h-[420px] border rounded-md p-3 text-[14px] font-mono"></textarea>
+      <textarea id="editContent" class="w-full flex-1 min-h-[420px] border-2 border-[#6b7280] rounded-md p-3 text-[14px] font-mono"></textarea>
     </div>
-    <div class="px-4 py-3 border-t flex justify-end gap-2 bg-[#f6f8fa] rounded-b-lg">
-      <button onclick="closeModal()" class="border bg-white px-4 py-2 text-[14px] rounded-md">Cancel</button>
+    <div class="px-4 py-3 border-t-2 border-[#6b7280] flex justify-end gap-2 bg-[#f6f8fa] rounded-b-lg">
+      <button onclick="closeModal()" class="border-2 border-[#6b7280] bg-white px-4 py-2 text-[14px] rounded-md">Cancel</button>
       <button onclick="saveFile()" class="bg-[#2ea043] text-white px-8 py-2.5 text-[15px] font-bold rounded-md">Save</button>
     </div>
   </div>
@@ -129,7 +126,6 @@ async function fetchContents(user, repo, path=''){
  let d=await res.json();
  return Array.isArray(d)?d:[];
 }
-// Recursive scan for nested folders con của con của con
 async function scanFolderRecursive(user, repo, basePath, grouped, depth=0, maxDepth=4){
  if(depth>maxDepth) return;
  let contents = await fetchContents(user, repo, basePath);
@@ -139,20 +135,18 @@ async function scanFolderRecursive(user, repo, basePath, grouped, depth=0, maxDe
    if(!grouped[basePath]) grouped[basePath]=[];
    grouped[basePath].hasIndex = htmlFiles.some(f=>f.name.toLowerCase()==='index.html');
    htmlFiles.forEach(file=>{
-     let pub = file.name.toLowerCase()==='index.html' ? `https://${user}.github.io/${repo}/${basePath}${basePath?'/':''}`.replace('//','/').replace('https:/','https://') : `https://${user}.github.io/${repo}/${basePath?basePath+'/':''}${file.name}`;
-     // fix double slash for root
+     let pub = file.name.toLowerCase()==='index.html' ? `https://${user}.github.io/${repo}/${basePath?basePath+'/':''}` : `https://${user}.github.io/${repo}/${basePath?basePath+'/':''}${file.name}`;
      if(basePath==='') pub = file.name.toLowerCase()==='index.html' ? `https://${user}.github.io/${repo}/` : `https://${user}.github.io/${repo}/${file.name}`;
-     grouped[basePath].push({label:file.name, path:`${repo}/${basePath?basePath+'/':''}${file.name}`, url:pub, key:`${repo}/${basePath?basePath+'/':''}${file.name}`, githubUrl:`https://github.com/${user}/${repo}/blob/main/${basePath?basePath+'/':''}${file.path.split('/').pop()}`, filePath:`${basePath?basePath+'/':''}${file.name}`, filePathFull: file.path, repo:repo, depth});
+     grouped[basePath].push({label:file.name, path:`${repo}/${basePath?basePath+'/':''}${file.name}`, url:pub, key:`${repo}/${basePath?basePath+'/':''}${file.name}`, githubUrl:`https://github.com/${user}/${repo}/blob/main/${basePath?basePath+'/':''}${file.name}`, filePath:`${basePath?basePath+'/':''}${file.name}`, filePathFull: file.path, repo:repo, depth});
    });
  }
- // recurse into subfolders
  for(let dir of subDirs){
    let subPath = basePath ? `${basePath}/${dir.name}` : dir.name;
    await scanFolderRecursive(user, repo, subPath, grouped, depth+1, maxDepth);
  }
 }
 
-let CACHE_KEY='leha_links_cache_v4';
+let CACHE_KEY='leha_links_cache_v5';
 function saveCache(repos, groupedData){
  try{ localStorage.setItem(CACHE_KEY, JSON.stringify({repos, groupedData, ts:Date.now()})); }catch(e){}
 }
@@ -182,7 +176,6 @@ function renderReposFromGrouped(repos, groupedByRepo){
    let grouped=groupedByRepo[repo.name];
    if(!grouped) continue;
    let folderNames=Object.keys(grouped).filter(k=>Array.isArray(grouped[k]) && grouped[k].length>0).sort();
-   // Put root first, then sort by depth then name
    folderNames.sort((a,b)=>{
      if(a==='') return -1; if(b==='') return 1;
      let da=a.split('/').length, db=b.split('/').length;
@@ -201,19 +194,23 @@ function renderReposFromGrouped(repos, groupedByRepo){
      if(!filteredFiles.length) return '';
      let folderKey = repo.name+'::'+folder;
      let isFolderCollapsed = localStorage.getItem('collapsed_folder_'+folderKey);
-     if(isFolderCollapsed===null) isFolderCollapsed = folder==='' ? '0' : '1'; // root open by default
+     if(isFolderCollapsed===null) isFolderCollapsed = folder==='' ? '0' : '1';
      let fCollapsed = isFolderCollapsed==='1';
      let folderLabel = folder==='' ? '(root)' : folder;
      let depth = folder ? folder.split('/').length : 0;
      let indentClass = depth<=1 ? 'pl-8' : depth===2 ? 'pl-12' : depth===3 ? 'pl-16' : 'pl-20';
      let hasIndex = grouped[folder].hasIndex;
      return `
-     <div class="folder-group border-t border-[#cbd5e1]">
-       <div class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-[#f6f8fa] cursor-pointer select-none ${indentClass}" onclick="toggleFolder('${folderKey.replace(/'/g, "\\'")}')">
-         <span class="text-[13px]">${fCollapsed?'▸':'▾'}</span>
-         <span class="text-[14px]">${folder===''?'🗂️':'📁'}</span>
-         <span class="text-[14px] font-medium truncate">${folderLabel}</span>
+     <div class="folder-group border-t-2 border-[#6b7280]">
+       <div class="flex items-center gap-2 px-4 py-2.5 bg-white hover:bg-[#f6f8fa] cursor-pointer select-none ${indentClass} group" onclick="toggleFolder('${folderKey.replace(/'/g, "\\'")}')">
+         <span class="text-[14px]">${fCollapsed?'▸':'▾'}</span>
+         <span class="text-[15px]">${folder===''?'🗂️':'📁'}</span>
+         <span class="text-[15px] font-medium truncate">${folderLabel}</span>
+         <span class="text-[12px] text-[#8b949e] ml-1">${files.length} files</span>
          ${hasIndex ? `<a href="https://leha-os.github.io/${repo.name}${folder?'/'+folder+'/':'/'}" target="_blank" class="ml-2 text-[12px] text-[#57606a] hover:text-[#24292f] hover:underline shrink-0" onclick="event.stopPropagation()">/${folder?folder+'/':''}</a>` : ``}
+         <div class="ml-auto flex items-center gap-1.5" onclick="event.stopPropagation()">
+           ${folder!=='' ? `<button onclick="moveFolder('${repo.name}','${folder.replace(/'/g, "\\'")}')" class="text-[12px] border-2 border-[#0d1117] bg-[#fde047] text-[#0d1117] px-3 py-1 rounded-md hover:bg-[#facc15] shadow-sm font-bold">📦 MOVE FOLDER</button>` : ``}
+         </div>
        </div>
        <div class="folder-body ${fCollapsed?'hidden':''}" id="folder-${CSS.escape(folderKey)}">
          ${filteredFiles.map(l=>{
@@ -222,18 +219,18 @@ function renderReposFromGrouped(repos, groupedByRepo){
            let displayName = customNames[l.key] || l.label;
            let hasNote = !!customNames[l.key];
            return `
-           <div data-sel="${selId}" class="file-row ${isSel?'selected':''} flex items-center justify-between ${indentClass} pr-3 py-2 text-[14px] group border-t border-[#f6f8fa]">
+           <div data-sel="${selId}" class="file-row ${isSel?'selected':''} flex items-center justify-between ${indentClass} pr-3 py-2.5 text-[15px] group border-t-2 border-[#e5e7eb]">
              <div class="flex items-center gap-2 min-w-0 flex-1">
-               <input type="checkbox" ${isSel?'checked':''} onchange="toggleSelect('${l.repo}','${l.filePath}','${l.key}')" class="w-3.5 h-3.5">
+               <input type="checkbox" ${isSel?'checked':''} onchange="toggleSelect('${l.repo}','${l.filePath}','${l.key}')" class="w-4 h-4">
                <span class="text-[13px] text-[#8b949e]">↳</span>
                <span class="truncate ${hasNote?'font-medium text-[#24292f]':''}" title="${l.path}" ondblclick="editNote('${l.key.replace(/'/g, "\\'")}')">${displayName}</span>
-               ${hasNote?`<span class="ml-1 text-[11px] bg-[#f6f8fa] text-[#57606a] px-1 rounded">note</span>`:''}
+               ${hasNote?`<span class="ml-1 text-[11px] bg-[#f6f8fa] border-2 border-[#6b7280] text-[#57606a] px-1.5 rounded">note</span>`:''}
              </div>
-             <div class="flex items-center gap-1">
-               <a href="${l.url}" target="_blank" class="text-[13px] bg-[#0d1117] text-white px-3 py-1.5 rounded-md">OPEN</a>
-               <button onclick="copyLink('${l.url}')" class="text-[13px] border bg-white px-3 py-1.5 rounded-md">Copy</button>
+             <div class="flex items-center gap-1.5">
+               <a href="${l.url}" target="_blank" class="text-[13px] bg-[#0d1117] text-white px-3.5 py-1.5 rounded-md">OPEN</a>
+               <button onclick="copyLink('${l.url}')" class="text-[13px] border-2 border-[#6b7280] bg-white px-3 py-1.5 rounded-md">Copy</button>
                <div class="dropdown">
-                 <button onclick="toggleMenu('${selId}')" class="text-[13px] border bg-white px-2 py-1.5 rounded-md">⋯</button>
+                 <button onclick="toggleMenu('${selId}')" class="text-[13px] border-2 border-[#6b7280] bg-white px-2.5 py-1.5 rounded-md">⋯</button>
                  <div id="menu-${selId}" class="dropdown-menu hidden">
                    <button onclick="editNote('${l.key.replace(/'/g, "\\'")}');closeAllMenus()">📝 Edit ghi chú</button>
                    <button onclick="editFile('${l.repo}','${l.filePath}');closeAllMenus()">✏️ Edit Real</button>
@@ -253,7 +250,7 @@ function renderReposFromGrouped(repos, groupedByRepo){
    let section=document.createElement('div');
    section.className='border-b-2 border-[#6b7280] last:border-0';
    section.innerHTML=`
-     <div class="repo-header px-3 py-2.5 bg-[#f6f8fa] flex items-center gap-2 cursor-pointer select-none" onclick="toggleRepo('${repo.name}')">
+     <div class="repo-header px-3 py-3 bg-[#f6f8fa] flex items-center gap-2 cursor-pointer select-none border-b-2 border-[#6b7280]" onclick="toggleRepo('${repo.name}')">
        <span class="text-[14px]">${repoCollapsed?'▸':'▾'}</span>
        <span class="font-semibold text-[15px] text-[#24292f]">${repo.name}</span>
        ${hasRootIndex ? `<a href="https://leha-os.github.io/${repo.name}/" target="_blank" class="ml-auto text-[13px] text-[#57606a] hover:text-[#24292f] hover:underline" onclick="event.stopPropagation()">/leha-os.github.io/${repo.name}/</a>` : ``}
@@ -293,14 +290,12 @@ async function scanAll(force=false){
    let groupedByRepo={};
    let out=document.getElementById('out');
    if(out && force) out.innerHTML='<div class="p-4 text-[14px] text-[#57606a]">Đang sync nhanh + quét folder con của con... hiện từng repo khi xong.</div>';
-   
    const batchSize=5;
    for(let i=0;i<repos.length;i+=batchSize){
      let batch=repos.slice(i,i+batchSize);
      await Promise.all(batch.map(async (repo)=>{
        let grouped={}; grouped['']=[];
        await scanFolderRecursive(user, repo.name, '', grouped, 0, 4);
-       // also ensure root has hasIndex flag
        if(!grouped['']) grouped['']=[]; if(grouped[''].hasIndex===undefined) grouped[''].hasIndex=false;
        groupedByRepo[repo.name]=grouped;
      }));
@@ -354,12 +349,10 @@ function toggleFolder(key){
 function collapseAll(){
  document.querySelectorAll('.repo-body').forEach(b=>b.classList.add('hidden'));
  document.querySelectorAll('.folder-body').forEach(b=>b.classList.add('hidden'));
- document.querySelectorAll('[id^="body-"]').forEach(b=>{ localStorage.setItem('collapsed_'+b.id.replace('body-',''),'1'); });
 }
 function openAll(){
  document.querySelectorAll('.repo-body').forEach(b=>b.classList.remove('hidden'));
  document.querySelectorAll('.folder-body').forEach(b=>b.classList.remove('hidden'));
- document.querySelectorAll('[id^="body-"]').forEach(b=>{ localStorage.setItem('collapsed_'+b.id.replace('body-',''),'0'); });
 }
 async function editNote(key){
  let cur=customNames[key]||'';
@@ -367,7 +360,7 @@ async function editNote(key){
  if(nv===null) return;
  if(nv.trim()===''){ delete customNames[key]; } else { customNames[key]=nv.trim(); }
  localStorage.setItem('customNames', JSON.stringify(customNames));
- let cache=loadCache(); if(cache) renderReposFromGrouped(cache.repos, cache.groupedData); else renderFromCache();
+ let cache=loadCache(); if(cache) renderReposFromGrouped(cache.repos, cache.groupedData);
 }
 function toggleMenu(id){
  let menu=document.getElementById('menu-'+id);
@@ -429,13 +422,10 @@ async function customPrompt(msg, def, placeholder){
   return r;
 }
 
-
-
-
 async function moveFolder(repoName, folderPath){
  let token=localStorage.getItem('gh_token'); if(!token){ await showCustomModal({title:'Thiếu token', msg:'Cần token có quyền repo'}); return; }
  let displayPath = folderPath==='' ? '(root)' : folderPath;
- const cache=loadCache();
+ let cache=loadCache();
  if(!cache){ await showCustomModal({title:'Chưa có cache', msg:'Bấm Sync now trước để load cache'}); return; }
  let groupedByRepo = cache.groupedData;
  let grouped = groupedByRepo[repoName];
@@ -451,7 +441,7 @@ async function moveFolder(repoName, folderPath){
    }
  }
  if(!filesToMove.length){ await showCustomModal({title:'Trống', msg:`Folder "${displayPath}" không có file HTML nào`}); return; }
- const confirmMove = await customConfirm(`Di chuyển cả folder "${displayPath}" (${filesToMove.length} files) sang chỗ khác? Sẽ giữ cấu trúc con bên trong.`, `Move folder ${displayPath}`);
+ const confirmMove = await showCustomModal({title:`Move folder ${displayPath}?`, msg:`Di chuyển cả folder "${displayPath}" (${filesToMove.length} files) kể cả folder con của con.`, okText:'Tiếp tục'});
  if(!confirmMove) return;
  let newRepo = await customPrompt(`Di chuyển ${filesToMove.length} file từ folder "${displayPath}"\nNhập repo đích (để trống = giữ nguyên repo ${repoName}):`, repoName, 'repo đích');
  if(newRepo===null) return;
@@ -459,7 +449,7 @@ async function moveFolder(repoName, folderPath){
  let targetFolder = await customPrompt(`Nhập folder đích mới (VD: lab-moi/ , archive/2024/ , để trống = root):`, folderPath, 'folder đích mới');
  if(targetFolder===null) return;
  targetFolder = targetFolder.trim().replace(/^\/+|\/+$/g,'');
- const ok = await showCustomModal({title:`Move folder → ${targetFolder||'(root)'}`, msg:`Di chuyển ${filesToMove.length} file từ "${repoName}/${displayPath}" sang "${newRepo}/${targetFolder||'(root)'}".`, okText:'Move folder'});
+ const ok = await showCustomModal({title:`Move folder → ${targetFolder||'(root)'}`, msg:`Di chuyển ${filesToMove.length} file từ "${repoName}/${displayPath}" sang "${newRepo}/${targetFolder||'(root)'}".\nGiữ cấu trúc con bên trong.`, okText:'MOVE FOLDER'});
  if(!ok) return;
  document.getElementById('syncStatus').innerText=`moving folder ${filesToMove.length} files...`;
  let moved=0, failed=0;
@@ -501,7 +491,7 @@ async function moveFolder(repoName, folderPath){
 
 async function moveSelected(){
  if(selected.size===0) return;
- let token=localStorage.getItem('gh_token'); if(!token){ await showCustomModal({title:'Thiếu token', msg:'Cần token có quyền repo để move', okText:'OK'}); return; }
+ let token=localStorage.getItem('gh_token'); if(!token){ await showCustomModal({title:'Thiếu token', msg:'Cần token'}); return; }
  let repos=[...new Set([...selected.values()].map(v=>v.repo))];
  let targetRepo = repos.length===1 ? repos[0] : null;
  let newRepo = await customPrompt(`Bạn đang chọn ${selected.size} file từ repo: ${repos.join(', ')}\nNhập repo đích (để trống = giữ nguyên):`, targetRepo||'', 'tên repo đích');
@@ -577,26 +567,6 @@ if(savedPin){
 }
 </script>
 
-<div id="editModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center p-2 z-50">
-  <div class="bg-white rounded-lg border w-full max-w-4xl max-h-[95vh] flex flex-col">
-    <div class="px-4 py-3 border-b flex justify-between items-center bg-[#f6f8fa] rounded-t-lg">
-      <div><span id="editTitle" class="text-[15px] font-semibold">Edit</span><div id="editPath" class="text-[13px] text-[#57606a]"></div></div>
-      <button onclick="closeModal()" class="w-7 h-7 rounded-full hover:bg-[#9ca3af] flex items-center justify-center">✕</button>
-    </div>
-    <div class="px-4 py-3 border-b bg-[#fff8c5] flex flex-wrap gap-2 items-center text-[14px]">
-      <span class="font-semibold">⚡</span>
-      <button onclick="applyBGConfig()" class="bg-[#0d1117] text-white px-4 py-2 rounded-md font-medium">BG_CONFIG → Replace to</button>
-      <button onclick="applyHeroLogo()" class="bg-white border px-4 py-2 rounded-md">HERO_CONFIG → Replace to</button>
-    </div>
-    <div class="p-3 flex-1 overflow-hidden flex flex-col">
-      <textarea id="editContent" class="w-full flex-1 min-h-[420px] border rounded-md p-3 text-[14px] font-mono"></textarea>
-    </div>
-    <div class="px-4 py-3 border-t flex justify-end gap-2 bg-[#f6f8fa] rounded-b-lg">
-      <button onclick="closeModal()" class="border bg-white px-4 py-2 text-[14px] rounded-md">Cancel</button>
-      <button onclick="saveFile()" class="bg-[#2ea043] text-white px-8 py-2.5 text-[15px] font-bold rounded-md">Save</button>
-    </div>
-  </div>
-</div>
 <script>
 let curEdit={repo:null,path:null,sha:null};
 function b64DecodeUtf8(b64){
