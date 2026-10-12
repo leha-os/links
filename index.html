@@ -8,17 +8,18 @@
 <style>
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
 .github-header{background:#0d1117;border-bottom:1px solid #21262d}
-.file-row:hover{background:#f6f8fa}
+.file-row{border-left:2px solid transparent}
+.file-row:hover{border-left-color:#0969da;background:#f6f8fa}
 </style>
 </head>
 <body class="bg-white text-[#24292f] min-h-screen">
 <div class="github-header text-white px-4 py-3 flex items-center justify-between">
 <div class="flex items-center gap-3">
 <svg height="32" width="32" viewBox="0 0 16 16" fill="white"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.04-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"></path></svg>
-<span class="font-semibold text-sm">leha-os / <span class="font-normal">links</span> <span class="ml-2 text-[11px] bg-[#1f6feb] px-2 py-0.5 rounded-full">PRIVATE</span></span>
+<span class="font-semibold text-sm">leha-os / links <span class="ml-2 text-[11px] bg-[#1f6feb] px-2 py-0.5 rounded-full">PRIVATE</span></span>
 </div>
 <div class="flex items-center gap-2">
-<span id="syncStatus" class="text-[11px] text-[#8b949e]">auto-sync ON • 30s</span>
+<span id="syncStatus" class="text-[11px] text-[#8b949e]">auto-sync ON</span>
 <div class="w-2 h-2 bg-[#2ea043] rounded-full animate-pulse"></div>
 </div>
 </div>
@@ -26,58 +27,34 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,san
 <div id="lock" class="max-w-3xl mx-auto px-6 py-16">
 <div class="border border-[#d0d7de] rounded-md p-6">
 <h2 class="text-[16px] font-semibold">🔒 Private access</h2>
-<p class="text-[13px] text-[#57606a] mt-2">PIN + token stay in your browser only. Others cannot see private repos.</p>
+<p class="text-[13px] text-[#57606a] mt-2">PIN + token stay in your browser only.</p>
 <div class="mt-4 space-y-3">
-<input id="pin" type="password" placeholder="Set PIN (e.g. 1234)" class="w-full max-w-sm border border-[#d0d7de] rounded-md px-3 py-1.5 text-[14px]">
-<input id="token" type="password" placeholder="GitHub token ghp_... for private" class="w-full max-w-sm border border-[#d0d7de] rounded-md px-3 py-1.5 text-[14px]">
-<button id="unlock" class="bg-[#2ea043] text-white text-[14px] font-medium px-4 py-1.5 rounded-md">Unlock and auto-sync</button>
+<input id="pin" type="password" placeholder="Set PIN" class="w-full max-w-sm border border-[#d0d7de] rounded-md px-3 py-1.5 text-[14px]">
+<input id="token" type="password" placeholder="GitHub token ghp_..." class="w-full max-w-sm border border-[#d0d7de] rounded-md px-3 py-1.5 text-[14px]">
+<button id="unlock" class="bg-[#2ea043] text-white text-[14px] font-medium px-4 py-1.5 rounded-md">Unlock</button>
 </div>
 </div>
 </div>
 
 <div id="app" class="hidden">
-<div class="max-w-[1280px] mx-auto px-4 py-4">
-<div class="flex flex-col md:flex-row gap-4">
-<div class="flex-1">
+<div class="max-w-[1024px] mx-auto px-4 py-4">
 <div class="flex items-center justify-between mb-3">
 <div class="flex items-center gap-2">
-<h2 class="font-semibold text-[14px]">Repositories + HTML files</h2>
+<h2 class="font-semibold text-[14px]">Repositories</h2>
 <span id="count" class="text-[12px] text-[#57606a] border border-[#d0d7de] rounded-full px-2">0 links</span>
-<span id="lastSync" class="text-[11px] text-[#8b949e] ml-2"></span>
 </div>
 <div class="flex gap-2">
-<input id="search" placeholder="Filter..." class="border border-[#d0d7de] rounded-md px-3 py-1 text-[12px] w-32">
+<input id="search" placeholder="Filter..." class="border border-[#d0d7de] rounded-md px-3 py-1 text-[12px] w-40">
 <button id="scanBtn" class="text-[12px] border border-[#d0d7de] bg-[#f6f8fa] px-3 py-1 rounded-md">Sync now</button>
 </div>
 </div>
-<div class="border border-[#d0d7de] rounded-md overflow-hidden">
-<div class="bg-[#f6f8fa] px-4 py-2 flex justify-between text-[12px] font-semibold border-b border-[#d0d7de]">
-<span>leha-os / links → public sites (auto-detects folder, v1, v2, index)</span>
-<span class="text-[#57606a] font-normal">OPEN</span>
-</div>
-<div id="out"></div>
-</div>
-</div>
-<div class="w-full md:w-[296px]">
-<div class="border border-[#d0d7de] rounded-md p-4">
-<h3 class="text-[14px] font-semibold">About</h3>
-<p class="text-[12px] text-[#57606a] mt-2">Auto-syncs when you create new folder, v1.html, v2.html, index.html.</p>
-<div class="mt-3">
-<button id="openAll" class="w-full bg-[#0d1117] text-white text-[12px] font-medium py-1.5 rounded-md">OPEN ALL LINKS</button>
-</div>
-<div class="mt-4 text-[12px]">
-<div class="flex justify-between py-1 border-b border-dashed"><span>Auto-sync</span><span class="text-[#2ea043]">ON (30s)</span></div>
-<div class="flex justify-between py-1 border-b border-dashed"><span>Private repos</span><span id="privateCount">0</span></div>
-<div class="flex justify-between py-1"><span>Total files</span><span id="totalFiles">0</span></div>
-</div>
-</div>
-</div>
-</div>
+
+<div class="border border-[#d0d7de] rounded-md overflow-hidden" id="out"></div>
 </div>
 </div>
 
 <script>
-let reposCache=[], allLinks=[];
+let reposCache=[], allLinks=[], customNames=JSON.parse(localStorage.getItem('customNames')||'{}');
 const $=s=>document.querySelector(s);
 function getHeaders(){
  let t=localStorage.getItem('gh_token')||'';
@@ -100,8 +77,6 @@ async function fetchContents(user, repo, path=''){
 async function scanAll(){
  let user='leha-os';
  let headers=getHeaders();
- const st=$('#syncStatus');
- if(st) st.innerText='syncing...';
  let res=await fetch(`https://api.github.com/user/repos?per_page=100&sort=updated`,{headers});
  let repos=[];
  if(res.ok && localStorage.getItem('gh_token')){
@@ -114,17 +89,12 @@ async function scanAll(){
  }
  reposCache=repos;
  await renderRepos(repos);
- if(st) st.innerText=`auto-sync ON • last: ${new Date().toLocaleTimeString()}`;
- const ls=$('#lastSync');
- if(ls) ls.innerText=`last sync ${new Date().toLocaleTimeString()}`;
 }
 async function renderRepos(repos){
- let filter=($('#search')?.value||'').toLowerCase();
+ let filter=($?.value||'').toLowerCase();
  let out=$('#out'); if(!out) return;
  out.innerHTML=''; allLinks=[];
- let privateCount=0;
  for(let repo of repos){
-   if(repo.private) privateCount++;
    let user='leha-os';
    let root=await fetchContents(user, repo.name,'');
    let htmlFiles=root.filter(f=>f.type==='file' && f.name.toLowerCase().endsWith('.html'));
@@ -133,7 +103,7 @@ async function renderRepos(repos){
    htmlFiles.forEach(f=>{
      let pub=f.name.toLowerCase()=='index.html'?`https://${user}.github.io/${repo.name}/`:`https://${user}.github.io/${repo.name}/${f.name}`;
      if(!filter || f.name.toLowerCase().includes(filter) || repo.name.toLowerCase().includes(filter)){
-       repoLinks.push({label:f.name, path:`${repo.name}/${f.name}`, url:pub});
+       repoLinks.push({label:f.name, path:`${repo.name}/${f.name}`, url:pub, key:`${repo.name}/${f.name}`});
        allLinks.push(pub);
      }
    });
@@ -143,34 +113,81 @@ async function renderRepos(repos){
      subHtml.forEach(file=>{
        let pub=file.name.toLowerCase()=='index.html'?`https://${user}.github.io/${repo.name}/${folder.path}/`:`https://${user}.github.io/${repo.name}/${folder.path}/${file.name}`;
        if(!filter || `${folder.path}/${file.name}`.toLowerCase().includes(filter) || repo.name.toLowerCase().includes(filter)){
-         repoLinks.push({label:`${folder.path}/${file.name}`, path:`${repo.name}/${folder.path}/${file.name}`, url:pub});
+         repoLinks.push({label:`${folder.path}/${file.name}`, path:`${repo.name}/${folder.path}/${file.name}`, url:pub, key:`${repo.name}/${folder.path}/${file.name}`});
          allLinks.push(pub);
        }
      });
    }
    if(repoLinks.length===0 && filter) continue;
+
+   let displayRepoName = customNames[repo.name] || repo.name;
    let section=document.createElement('div');
    section.className='border-b border-[#d0d7de] last:border-0';
-   let repoHeader=`<div class="px-4 py-2 bg-white flex items-center gap-2 text-[13px]"><span class="font-semibold">${repo.name}</span> ${repo.private?'<span class="text-[10px] border border-[#d0d7de] rounded-full px-1.5">private</span>':''}<a href="https://${user}.github.io/${repo.name}/" target="_blank" class="ml-auto text-[11px] text-[#0969da]">/${repo.name}/</a></div>`;
-   let rows=repoLinks.map(l=>`
-     <div class="flex items-center justify-between px-4 py-1.5 border-t border-[#d0d7de] text-[12px] hover:bg-[#f6f8fa]">
-       <div class="min-w-0 flex-1">
-         <span class="truncate">${l.label}</span>
-         <span class="text-[10px] text-[#8b949e] ml-2">${l.path}</span>
-         ${l.label.match(/v\d+\.html/i)?'<span class="ml-2 text-[10px] bg-[#ddf4ff] text-[#0969da] px-1.5 rounded-full">version</span>':''}
-       </div>
-       <div class="flex items-center gap-2">
-         <a href="${l.url}" target="_blank" class="text-[11px] border border-[#d0d7de] bg-[#f6f8fa] px-2.5 py-0.5 rounded-md">OPEN</a>
-         <button onclick="navigator.clipboard.writeText('${l.url}')" class="text-[11px] text-[#57606a]">Copy</button>
-       </div>
+   let isCollapsed = localStorage.getItem('collapsed_'+repo.name)==='1';
+   section.innerHTML=`
+     <div class="repo-header px-3 py-2 bg-[#f6f8fa] flex items-center gap-2 cursor-pointer select-none" onclick="toggleRepo('${repo.name}')">
+       <span class="text-[12px]">${isCollapsed?'▸':'▾'}</span>
+       <span class="font-semibold text-[13px] text-[#0969da] hover:underline" title="Click to rename" ondblclick="event.stopPropagation(); renameRepo('${repo.name}')">${displayRepoName}</span>
+       ${repo.private?'<span class="text-[10px] border border-[#d0d7de] rounded-full px-1.5">private</span>':''}
+       <span class="text-[11px] text-[#57606a] ml-1">${repoLinks.length} files</span>
+       <a href="https://${user}.github.io/${repo.name}/" target="_blank" class="ml-auto text-[11px] text-[#57606a] hover:text-[#0969da]" onclick="event.stopPropagation()">/${repo.name}/ →</a>
      </div>
-   `).join('') || `<div class="px-4 py-2 text-[11px] text-[#8b949e] border-t border-[#d0d7de]">No HTML files (add index.html or v1.html)</div>`;
-   section.innerHTML=repoHeader+rows;
+     <div class="repo-body ${isCollapsed?'hidden':''}" id="body-${repo.name}">
+       ${repoLinks.map(l=>{
+         let dName = customNames[l.key] || l.label;
+         return `
+         <div class="file-row flex items-center justify-between pl-8 pr-3 py-1.5 text-[12px] group">
+           <div class="flex items-center gap-2 min-w-0 flex-1">
+             <span class="w-[2px] h-3 bg-[#d0d7de]"></span>
+             <span class="truncate" title="${l.path}" ondblclick="renameFile('${l.key}')" >${dName}</span>
+             ${l.label.match(/v\d+\.html/i)?'<span class="text-[10px] bg-[#ddf4ff] text-[#0969da] px-1 rounded-full">v</span>':''}
+           </div>
+           <div class="flex items-center gap-1.5">
+             <a href="${l.url}" target="_blank" class="text-[11px] bg-[#0d1117] text-white px-2.5 py-0.5 rounded-md hover:bg-black">OPEN</a>
+             <button onclick="copyLink('${l.url}')" class="text-[11px] border border-[#d0d7de] bg-white px-2 py-0.5 rounded-md hover:bg-[#f6f8fa]">Copy</button>
+             <button onclick="renameFile('${l.key}')" class="text-[11px] text-[#8b949e] hover:text-[#24292f] opacity-0 group-hover:opacity-100">✎</button>
+           </div>
+         </div>
+         `;
+       }).join('') || `<div class="pl-8 pr-3 py-2 text-[11px] text-[#8b949e]">No HTML files</div>`}
+     </div>
+   `;
    out.appendChild(section);
  }
- const c=$('#count'); if(c) c.innerText=`${allLinks.length} links`;
- const pc=$('#privateCount'); if(pc) pc.innerText=privateCount;
- const tf=$('#totalFiles'); if(tf) tf.innerText=allLinks.length;
+ $('#count').innerText=`${allLinks.length} links`;
+}
+function toggleRepo(name){
+ let body=document.getElementById('body-'+name);
+ let isHidden=body.classList.contains('hidden');
+ body.classList.toggle('hidden');
+ localStorage.setItem('collapsed_'+name, isHidden?'0':'1');
+ // update arrow
+ let header=body.previousElementSibling;
+ if(header) header.querySelector('span').innerText = isHidden ? '▾' : '▸';
+}
+function copyLink(url){
+ navigator.clipboard.writeText(url);
+ let old=$('#syncStatus').innerText;
+ $('#syncStatus').innerText='Copied!';
+ setTimeout(()=>$('#syncStatus').innerText=old, 1000);
+}
+function renameRepo(repo){
+ let cur=customNames[repo]||repo;
+ let nv=prompt('Rename repo display name:', cur);
+ if(nv && nv.trim()){
+   customNames[repo]=nv.trim();
+   localStorage.setItem('customNames', JSON.stringify(customNames));
+   renderRepos(reposCache);
+ }
+}
+function renameFile(key){
+ let cur=customNames[key]||key.split('/').pop();
+ let nv=prompt('Rename display name for '+key+':', cur);
+ if(nv && nv.trim()){
+   customNames[key]=nv.trim();
+   localStorage.setItem('customNames', JSON.stringify(customNames));
+   renderRepos(reposCache);
+ }
 }
 document.getElementById('unlock').onclick=()=>{
  let pin=document.getElementById('pin').value.trim();
@@ -184,11 +201,6 @@ document.getElementById('unlock').onclick=()=>{
  setInterval(scanAll, 30000);
 };
 document.getElementById('scanBtn').onclick=scanAll;
-document.getElementById('openAll').onclick=()=>{
- if(!allLinks.length) return;
- if(!confirm(`Open ${allLinks.length} links?`)) return;
- allLinks.forEach((u,i)=>setTimeout(()=>window.open(u,'_blank'), i*200));
-};
 document.getElementById('search').addEventListener('input',()=>renderRepos(reposCache));
 let savedPin=localStorage.getItem('leha_pin');
 let savedToken=localStorage.getItem('gh_token');
