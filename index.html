@@ -3,75 +3,113 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>leha-os / links</title>
+<title>LEHA Repo</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; font-size:14px}
 .github-header{background:#0d1117;border-bottom:1px solid #21262d}
 .file-row{border-left:2px solid transparent}
 .file-row:hover{border-left-color:#0969da;background:#f6f8fa}
 .file-row.selected{background:#fff8c5;border-left-color:#d4a72c}
 .dropdown{position:relative}
-.dropdown-menu{position:absolute;right:0;top:100%;margin-top:4px;background:white;border:1px solid #d0d7de;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,0.1);z-index:20;min-width:160px;overflow:hidden}
-.dropdown-menu button{display:block;width:100%;text-align:left;padding:8px 12px;font-size:11px;}
+.dropdown-menu{position:absolute;right:0;top:100%;margin-top:4px;background:white;border:1px solid #d0d7de;border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,0.12);z-index:20;min-width:180px;overflow:hidden}
+.dropdown-menu button{display:block;width:100%;text-align:left;padding:9px 13px;font-size:12px;}
 .dropdown-menu button:hover{background:#f6f8fa}
+.indent-1{padding-left:2rem}
+.indent-2{padding-left:3.5rem}
+.indent-3{padding-left:5rem}
 </style>
 </head>
 <body class="bg-white text-[#24292f] min-h-screen">
 <div class="github-header text-white px-4 py-3 flex items-center justify-between">
 <div class="flex items-center gap-3">
 <svg height="32" width="32" viewBox="0 0 16 16" fill="white"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.04-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"></path></svg>
-<a href="https://github.com/leha-os?tab=repositories" target="_blank" class="font-semibold text-sm hover:underline">LEHA Repo <span class="ml-2 text-[11px] bg-[#1f6feb] px-2 py-0.5 rounded-full">PRIVATE</span></a>
+<a href="https://github.com/leha-os?tab=repositories" target="_blank" class="font-semibold text-[14px] hover:underline">LEHA Repo <span class="ml-2 text-[11px] bg-[#1f6feb] px-2 py-0.5 rounded-full">PRIVATE</span></a>
 </div>
 <div class="flex items-center gap-2">
-<span id="syncStatus" class="text-[11px] text-[#8b949e]">manual sync</span>
+<span id="syncStatus" class="text-[12px] text-[#8b949e]">cached</span>
 <div class="w-2 h-2 bg-[#2ea043] rounded-full animate-pulse"></div>
 </div>
 </div>
 
 <div id="lock" class="max-w-3xl mx-auto px-6 py-16">
 <div class="border border-[#d0d7de] rounded-md p-6">
-<h2 class="text-[16px] font-semibold">🔒 Private access</h2>
-<p class="text-[13px] text-[#57606a] mt-2">PIN + token stay in your browser only.</p>
+<h2 class="text-[17px] font-semibold">🔒 Private access</h2>
+<p class="text-[14px] text-[#57606a] mt-2">PIN + token stay in your browser only.</p>
 <div class="mt-4 space-y-3">
-<input id="pin" type="password" placeholder="Set PIN" class="w-full max-w-sm border rounded-md px-3 py-1.5 text-[14px]">
-<input id="token" type="password" placeholder="GitHub token ghp_..." class="w-full max-w-sm border rounded-md px-3 py-1.5 text-[14px]">
-<button id="unlock" class="bg-[#2ea043] text-white text-[14px] font-medium px-4 py-1.5 rounded-md">Unlock</button>
+<input id="pin" type="password" placeholder="Set PIN" class="w-full max-w-sm border rounded-md px-3 py-2 text-[14px]">
+<input id="token" type="password" placeholder="GitHub token ghp_..." class="w-full max-w-sm border rounded-md px-3 py-2 text-[14px]">
+<button id="unlock" class="bg-[#2ea043] text-white text-[14px] font-medium px-4 py-2 rounded-md">Unlock</button>
 </div>
 </div>
 </div>
 
 <div id="app" class="hidden">
-<div class="max-w-[1024px] mx-auto px-4 py-4">
+<div class="max-w-[1100px] mx-auto px-4 py-4">
 <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
 <div class="flex items-center gap-2">
-<!-- Repositories title removed -->
 <span id="count" class="hidden">0 links</span>
 </div>
 <div class="flex flex-wrap gap-2 items-center">
-<input id="search" placeholder="Filter..." class="border border-[#d0d7de] rounded-md px-3 py-1 text-[12px] w-32">
-<button id="collapseAllBtn" class="text-[11px] border bg-white px-2.5 py-1 rounded-md">Collapse all</button>
-<button id="openAllBtn" class="text-[11px] border bg-white px-2.5 py-1 rounded-md">Open all</button>
-<button id="scanBtn" class="text-[11px] border bg-[#f6f8fa] px-3 py-1 rounded-md">Sync now</button>
+<input id="search" placeholder="Filter..." class="border border-[#d0d7de] rounded-md px-3 py-1.5 text-[13px] w-36">
+<button id="collapseAllBtn" class="text-[12px] border bg-white px-3 py-1.5 rounded-md">Collapse all</button>
+<button id="openAllBtn" class="text-[12px] border bg-white px-3 py-1.5 rounded-md">Open all</button>
+<button id="scanBtn" class="text-[12px] border bg-[#f6f8fa] px-3 py-1.5 rounded-md">Sync now</button>
 </div>
 </div>
 
-<!-- bulk action bar -->
-<div id="bulkBar" class="hidden border border-[#d4a72c] bg-[#fff8c5] rounded-md px-3 py-2 mb-3 flex flex-wrap items-center gap-2 text-[12px]">
+<div id="bulkBar" class="hidden border border-[#d4a72c] bg-[#fff8c5] rounded-md px-3 py-2.5 mb-3 flex flex-wrap items-center gap-2 text-[13px]">
 <span id="bulkCount" class="font-medium">0 selected</span>
-<button onclick="moveSelected()" class="bg-[#0d1117] text-white px-3 py-1 rounded-md">Move</button>
-<button onclick="deleteSelected()" class="border bg-white px-3 py-1 rounded-md hover:bg-[#ffebe9]">Delete selected</button>
+<button onclick="moveSelected()" class="bg-[#0d1117] text-white px-3 py-1.5 rounded-md">Move</button>
+<button onclick="deleteSelected()" class="border bg-white px-3 py-1.5 rounded-md hover:bg-[#ffebe9]">Delete selected</button>
 <button onclick="clearSelection()" class="text-[#57606a] px-2">Clear</button>
-
 </div>
 
 <div class="border border-[#d0d7de] rounded-md overflow-hidden" id="out"></div>
 </div>
 </div>
 
+<!-- Beautiful custom modal -->
+<div id="customModal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 z-[60]">
+  <div class="bg-white rounded-xl border border-[#d0d7de] shadow-xl w-full max-w-[400px] overflow-hidden">
+    <div class="px-5 pt-5 pb-3">
+      <h3 id="customModalTitle" class="text-[15px] font-semibold text-[#24292f]">Xác nhận</h3>
+      <p id="customModalMsg" class="text-[14px] text-[#57606a] mt-2 leading-5">Bạn có chắc?</p>
+      <div id="customModalInputWrap" class="hidden mt-3">
+        <input id="customModalInput" type="text" class="w-full border border-[#d0d7de] rounded-md px-3 py-2.5 text-[14px] focus:outline-none focus:border-[#0969da] focus:ring-1 focus:ring-[#0969da]" placeholder="">
+      </div>
+    </div>
+    <div class="px-5 py-3 bg-[#f6f8fa] border-t flex justify-end gap-2">
+      <button id="customModalCancel" class="px-4 py-2 text-[13px] border bg-white rounded-md hover:bg-[#f6f8fa]">Hủy</button>
+      <button id="customModalOk" class="px-4 py-2 text-[13px] bg-[#0d1117] text-white rounded-md hover:bg-black">OK</button>
+    </div>
+  </div>
+</div>
+
+<div id="editModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center p-2 z-50">
+  <div class="bg-white rounded-lg border w-full max-w-4xl max-h-[95vh] flex flex-col">
+    <div class="px-4 py-3 border-b flex justify-between items-center bg-[#f6f8fa] rounded-t-lg">
+      <div><span id="editTitle" class="text-[14px] font-semibold">Edit</span><div id="editPath" class="text-[12px] text-[#57606a]"></div></div>
+      <button onclick="closeModal()" class="w-7 h-7 rounded-full hover:bg-[#d0d7de] flex items-center justify-center">✕</button>
+    </div>
+    <div class="px-4 py-3 border-b bg-[#fff8c5] flex flex-wrap gap-2 items-center text-[13px]">
+      <span class="font-semibold">⚡</span>
+      <button onclick="applyBGConfig()" class="bg-[#0d1117] text-white px-4 py-2 rounded-md font-medium">BG_CONFIG → Replace to</button>
+      <button onclick="applyHeroLogo()" class="bg-white border px-4 py-2 rounded-md">HERO_CONFIG → Replace to</button>
+    </div>
+    <div class="p-3 flex-1 overflow-hidden flex flex-col">
+      <textarea id="editContent" class="w-full flex-1 min-h-[420px] border rounded-md p-3 text-[13px] font-mono"></textarea>
+    </div>
+    <div class="px-4 py-3 border-t flex justify-end gap-2 bg-[#f6f8fa] rounded-b-lg">
+      <button onclick="closeModal()" class="border bg-white px-4 py-2 text-[13px] rounded-md">Cancel</button>
+      <button onclick="saveFile()" class="bg-[#2ea043] text-white px-8 py-2.5 text-[14px] font-bold rounded-md">Save</button>
+    </div>
+  </div>
+</div>
+
 <script>
-let reposCache=[], allLinks=[], customNames=JSON.parse(localStorage.getItem('customNames')||'{}');
-let selected = new Map(); // key -> {repo,path}
+let reposCache=[], customNames=JSON.parse(localStorage.getItem('customNames')||'{}');
+let selected = new Map();
 const $=s=>document.querySelector(s);
 function getHeaders(){
  let t=localStorage.getItem('gh_token')||'';
@@ -91,13 +129,156 @@ async function fetchContents(user, repo, path=''){
  let d=await res.json();
  return Array.isArray(d)?d:[];
 }
-async function scanAll(){
+// Recursive scan for nested folders con của con của con
+async function scanFolderRecursive(user, repo, basePath, grouped, depth=0, maxDepth=4){
+ if(depth>maxDepth) return;
+ let contents = await fetchContents(user, repo, basePath);
+ let htmlFiles = contents.filter(f=>f.type==='file' && f.name.toLowerCase().endsWith('.html'));
+ let subDirs = contents.filter(f=>f.type==='dir');
+ if(htmlFiles.length){
+   if(!grouped[basePath]) grouped[basePath]=[];
+   grouped[basePath].hasIndex = htmlFiles.some(f=>f.name.toLowerCase()==='index.html');
+   htmlFiles.forEach(file=>{
+     let pub = file.name.toLowerCase()==='index.html' ? `https://${user}.github.io/${repo}/${basePath}${basePath?'/':''}`.replace('//','/').replace('https:/','https://') : `https://${user}.github.io/${repo}/${basePath?basePath+'/':''}${file.name}`;
+     // fix double slash for root
+     if(basePath==='') pub = file.name.toLowerCase()==='index.html' ? `https://${user}.github.io/${repo}/` : `https://${user}.github.io/${repo}/${file.name}`;
+     grouped[basePath].push({label:file.name, path:`${repo}/${basePath?basePath+'/':''}${file.name}`, url:pub, key:`${repo}/${basePath?basePath+'/':''}${file.name}`, githubUrl:`https://github.com/${user}/${repo}/blob/main/${basePath?basePath+'/':''}${file.path.split('/').pop()}`, filePath:`${basePath?basePath+'/':''}${file.name}`, filePathFull: file.path, repo:repo, depth});
+   });
+ }
+ // recurse into subfolders
+ for(let dir of subDirs){
+   let subPath = basePath ? `${basePath}/${dir.name}` : dir.name;
+   await scanFolderRecursive(user, repo, subPath, grouped, depth+1, maxDepth);
+ }
+}
+
+let CACHE_KEY='leha_links_cache_v4';
+function saveCache(repos, groupedData){
+ try{ localStorage.setItem(CACHE_KEY, JSON.stringify({repos, groupedData, ts:Date.now()})); }catch(e){}
+}
+function loadCache(){
+ try{
+  let raw=localStorage.getItem(CACHE_KEY);
+  if(!raw) return null;
+  let j=JSON.parse(raw);
+  if(Date.now()-j.ts > 24*60*60*1000) return null;
+  return j;
+ }catch(e){ return null; }
+}
+function renderFromCache(){
+ let cache=loadCache();
+ if(!cache) return false;
+ reposCache=cache.repos;
+ document.getElementById('syncStatus').innerText='cached • '+new Date(cache.ts).toLocaleTimeString();
+ renderReposFromGrouped(cache.repos, cache.groupedData);
+ return true;
+}
+
+function renderReposFromGrouped(repos, groupedByRepo){
+ let filter=document.getElementById('search').value.toLowerCase();
+ let out=document.getElementById('out'); if(!out) return;
+ out.innerHTML='';
+ for(let repo of repos){
+   let grouped=groupedByRepo[repo.name];
+   if(!grouped) continue;
+   let folderNames=Object.keys(grouped).filter(k=>Array.isArray(grouped[k]) && grouped[k].length>0).sort();
+   // Put root first, then sort by depth then name
+   folderNames.sort((a,b)=>{
+     if(a==='') return -1; if(b==='') return 1;
+     let da=a.split('/').length, db=b.split('/').length;
+     if(da!==db) return da-db;
+     return a.localeCompare(b);
+   });
+   let hasMatch = !filter || repo.name.toLowerCase().includes(filter) || folderNames.some(fn=> grouped[fn].some(f=> (f.label||'').toLowerCase().includes(filter) || (fn||'').toLowerCase().includes(filter) ));
+   if(!hasMatch) continue;
+   let isRepoCollapsed = localStorage.getItem('collapsed_'+repo.name);
+   if(isRepoCollapsed===null) isRepoCollapsed='1';
+   let repoCollapsed = isRepoCollapsed==='1';
+   let foldersHtml = folderNames.map(folder=>{
+     let files=grouped[folder];
+     if(!files || !files.length) return '';
+     let filteredFiles = filter ? files.filter(f=> (f.label||'').toLowerCase().includes(filter) || folder.toLowerCase().includes(filter) || repo.name.toLowerCase().includes(filter)) : files;
+     if(!filteredFiles.length) return '';
+     let folderKey = repo.name+'::'+folder;
+     let isFolderCollapsed = localStorage.getItem('collapsed_folder_'+folderKey);
+     if(isFolderCollapsed===null) isFolderCollapsed = folder==='' ? '0' : '1'; // root open by default
+     let fCollapsed = isFolderCollapsed==='1';
+     let folderLabel = folder==='' ? '(root)' : folder;
+     let depth = folder ? folder.split('/').length : 0;
+     let indentClass = depth<=1 ? 'pl-8' : depth===2 ? 'pl-12' : depth===3 ? 'pl-16' : 'pl-20';
+     let hasIndex = grouped[folder].hasIndex;
+     return `
+     <div class="folder-group border-t border-[#eaeef2]">
+       <div class="flex items-center gap-2 px-4 py-2 bg-white hover:bg-[#f6f8fa] cursor-pointer select-none ${indentClass}" onclick="toggleFolder('${folderKey.replace(/'/g, "\\'")}')">
+         <span class="text-[12px]">${fCollapsed?'▸':'▾'}</span>
+         <span class="text-[13px]">${folder===''?'🗂️':'📁'}</span>
+         <span class="text-[13px] font-medium truncate">${folderLabel}</span>
+         ${hasIndex ? `<a href="https://leha-os.github.io/${repo.name}${folder?'/'+folder+'/':'/'}" target="_blank" class="ml-2 text-[11px] text-[#57606a] hover:text-[#24292f] hover:underline shrink-0" onclick="event.stopPropagation()">/${folder?folder+'/':''}</a>` : ``}
+       </div>
+       <div class="folder-body ${fCollapsed?'hidden':''}" id="folder-${CSS.escape(folderKey)}">
+         ${filteredFiles.map(l=>{
+           let selId=l.repo+'::'+l.filePath;
+           let isSel=selected.has(selId);
+           let displayName = customNames[l.key] || l.label;
+           let hasNote = !!customNames[l.key];
+           return `
+           <div data-sel="${selId}" class="file-row ${isSel?'selected':''} flex items-center justify-between ${indentClass} pr-3 py-2 text-[13px] group border-t border-[#f6f8fa]">
+             <div class="flex items-center gap-2 min-w-0 flex-1">
+               <input type="checkbox" ${isSel?'checked':''} onchange="toggleSelect('${l.repo}','${l.filePath}','${l.key}')" class="w-3.5 h-3.5">
+               <span class="text-[12px] text-[#8b949e]">↳</span>
+               <span class="truncate ${hasNote?'font-medium text-[#24292f]':''}" title="${l.path}" ondblclick="editNote('${l.key.replace(/'/g, "\\'")}')">${displayName}</span>
+               ${hasNote?`<span class="ml-1 text-[10px] bg-[#f6f8fa] text-[#57606a] px-1 rounded">note</span>`:''}
+             </div>
+             <div class="flex items-center gap-1">
+               <a href="${l.url}" target="_blank" class="text-[12px] bg-[#0d1117] text-white px-3 py-1.5 rounded-md">OPEN</a>
+               <button onclick="copyLink('${l.url}')" class="text-[12px] border bg-white px-3 py-1.5 rounded-md">Copy</button>
+               <div class="dropdown">
+                 <button onclick="toggleMenu('${selId}')" class="text-[12px] border bg-white px-2 py-1.5 rounded-md">⋯</button>
+                 <div id="menu-${selId}" class="dropdown-menu hidden">
+                   <button onclick="editNote('${l.key.replace(/'/g, "\\'")}');closeAllMenus()">📝 Edit ghi chú</button>
+                   <button onclick="editFile('${l.repo}','${l.filePath}');closeAllMenus()">✏️ Edit Real</button>
+                   <button onclick="window.open('${l.githubUrl}','_blank');closeAllMenus()">🔗 Github</button>
+                   <button onclick="deleteFile('${l.repo}','${l.filePath}');closeAllMenus()" class="text-[#cf222e]">🗑️ Del</button>
+                 </div>
+               </div>
+             </div>
+           </div>
+           `;
+         }).join('')}
+       </div>
+     </div>
+     `;
+   }).join('');
+   let hasRootIndex = grouped[''] && grouped[''].hasIndex;
+   let section=document.createElement('div');
+   section.className='border-b border-[#d0d7de] last:border-0';
+   section.innerHTML=`
+     <div class="repo-header px-3 py-2.5 bg-[#f6f8fa] flex items-center gap-2 cursor-pointer select-none" onclick="toggleRepo('${repo.name}')">
+       <span class="text-[13px]">${repoCollapsed?'▸':'▾'}</span>
+       <span class="font-semibold text-[14px] text-[#24292f]">${repo.name}</span>
+       ${hasRootIndex ? `<a href="https://leha-os.github.io/${repo.name}/" target="_blank" class="ml-auto text-[12px] text-[#57606a] hover:text-[#24292f] hover:underline" onclick="event.stopPropagation()">/leha-os.github.io/${repo.name}/</a>` : ``}
+     </div>
+     <div class="repo-body ${repoCollapsed?'hidden':''}" id="body-${repo.name}">
+       ${foldersHtml || `<div class="pl-8 pr-3 py-2 text-[12px] text-[#8b949e]">No HTML</div>`}
+     </div>
+   `;
+   out.appendChild(section);
+ }
+}
+
+async function scanAll(force=false){
  let user='leha-os';
  let headers=getHeaders();
  let btn=document.getElementById('scanBtn');
  let oldText=btn?btn.innerText:'';
  if(btn){ btn.innerText='Syncing...'; btn.disabled=true; }
  try{
+   if(!force){
+     if(renderFromCache()){
+       setTimeout(()=>scanAll(true), 400);
+       return;
+     }
+   }
    let res=await fetch(`https://api.github.com/user/repos?per_page=100&sort=updated`,{headers});
    let repos=[];
    if(res.ok && localStorage.getItem('gh_token')){
@@ -109,17 +290,38 @@ async function scanAll(){
      repos=await r2.json();
    }
    reposCache=repos;
-   await renderRepos(repos);
+   let groupedByRepo={};
+   let out=document.getElementById('out');
+   if(out && force) out.innerHTML='<div class="p-4 text-[13px] text-[#57606a]">Đang sync nhanh + quét folder con của con... hiện từng repo khi xong.</div>';
+   
+   const batchSize=5;
+   for(let i=0;i<repos.length;i+=batchSize){
+     let batch=repos.slice(i,i+batchSize);
+     await Promise.all(batch.map(async (repo)=>{
+       let grouped={}; grouped['']=[];
+       await scanFolderRecursive(user, repo.name, '', grouped, 0, 4);
+       // also ensure root has hasIndex flag
+       if(!grouped['']) grouped['']=[]; if(grouped[''].hasIndex===undefined) grouped[''].hasIndex=false;
+       groupedByRepo[repo.name]=grouped;
+     }));
+     if(force){
+       renderReposFromGrouped(repos.slice(0, i+batchSize), groupedByRepo);
+       document.getElementById('syncStatus').innerText=`syncing ${Math.min(i+batchSize, repos.length)}/${repos.length}...`;
+     }
+   }
+   renderReposFromGrouped(repos, groupedByRepo);
+   saveCache(repos, groupedByRepo);
+   document.getElementById('syncStatus').innerText='synced '+new Date().toLocaleTimeString();
  } finally {
    if(btn){ btn.innerText=oldText||'Sync now'; btn.disabled=false; }
  }
 }
+
 function toggleSelect(repo, path, key){
  let id=repo+'::'+path;
  if(selected.has(id)) selected.delete(id);
  else selected.set(id,{repo,path,key});
  updateBulkBar();
- // update row style
  document.querySelectorAll(`[data-sel="${CSS.escape(id)}"]`).forEach(el=>{
    if(selected.has(id)) el.classList.add('selected');
    else el.classList.remove('selected');
@@ -134,122 +336,6 @@ function updateBulkBar(){
  else { bar.classList.remove('hidden'); cnt.innerText=selected.size+' selected'; }
 }
 function clearSelection(){ selected.clear(); updateBulkBar(); document.querySelectorAll('.file-row').forEach(r=>{ r.classList.remove('selected'); let cb=r.querySelector('input'); if(cb) cb.checked=false; }); }
-
-async function renderRepos(repos){
- let filter=document.getElementById('search').value.toLowerCase();
- let out=$('#out'); if(!out) return;
- out.innerHTML=''; allLinks=[];
- for(let repo of repos){
-   let user='leha-os';
-   let root=await fetchContents(user, repo.name,'');
-   let htmlFiles=root.filter(f=>f.type==='file' && f.name.toLowerCase().endsWith('.html'));
-   let folders=root.filter(f=>f.type==='dir');
-   let grouped={}; grouped['/']=[];
-   let hasRootIndex = htmlFiles.some(f=>f.name.toLowerCase()==='index.html');
-   htmlFiles.forEach(f=>{
-     let pub=f.name.toLowerCase()=='index.html'?`https://${user}.github.io/${repo.name}/`:`https://${user}.github.io/${repo.name}/${f.name}`;
-     let isIndex = f.name.toLowerCase()==='index.html';
-     // Only show index or files that are directly usable, but repo root link only if hasRootIndex
-     if(!filter || f.name.toLowerCase().includes(filter) || repo.name.toLowerCase().includes(filter)){
-       // If user wants only index-usable, we still show v1.html files because they are usable themselves
-       // But we will hide repo header link if no root index (handled below)
-       grouped['/'].push({label:f.name, path:`${repo.name}/${f.name}`, url:pub, key:`${repo.name}/${f.name}`, githubUrl:`https://github.com/${user}/${repo.name}/blob/main/${f.path}`, filePath:f.path, repo:repo.name, isIndex});
-       if(isIndex || f.name.toLowerCase().match(/^v\d+\.html$/)) { allLinks.push(pub); } else { allLinks.push(pub); }
-     }
-   });
-   for(let folder of folders){
-     let sub=await fetchContents(user, repo.name, folder.path);
-     let subHtml=sub.filter(s=>s.type==='file' && s.name.toLowerCase().endsWith('.html'));
-     let hasFolderIndex = subHtml.some(f=>f.name.toLowerCase()==='index.html');
-     if(!grouped[folder.path]) grouped[folder.path]=[];
-     subHtml.forEach(file=>{
-       let pub=file.name.toLowerCase()=='index.html'?`https://${user}.github.io/${repo.name}/${folder.path}/`:`https://${user}.github.io/${repo.name}/${folder.path}/${file.name}`;
-       let isIndex = file.name.toLowerCase()==='index.html';
-       if(!filter || `${folder.path}/${file.name}`.toLowerCase().includes(filter) || repo.name.toLowerCase().includes(filter)){
-         // Store hasFolderIndex info on each file for folder header rendering
-         grouped[folder.path].push({label:file.name, path:`${repo.name}/${folder.path}/${file.name}`, url:pub, key:`${repo.name}/${folder.path}/${file.name}`, githubUrl:`https://github.com/${user}/${repo.name}/blob/main/${file.path}`, filePath:file.path, repo:repo.name, isIndex, hasFolderIndex});
-         allLinks.push(pub);
-       }
-     });
-     // If folder has no html at all, remove it later; but if it has , we still keep it to show its files (v1.html etc) - however its own /folder/ link is not usable
-     grouped[folder.path].hasIndex = hasFolderIndex;
-   }
-   grouped['/'].hasIndex = hasRootIndex;
-
-   let folderNames=Object.keys(grouped).filter(k=>grouped[k].length>0);
-   if(folderNames.length===0 && filter) continue;
-   let displayRepoName = repo.name;
-   let section=document.createElement('div');
-   section.className='border-b border-[#d0d7de] last:border-0';
-   let isRepoCollapsed = localStorage.getItem('collapsed_'+repo.name);
-   if(isRepoCollapsed===null) isRepoCollapsed='1';
-   let repoCollapsed = isRepoCollapsed==='1';
-   let totalFiles = folderNames.reduce((s,k)=>s+grouped[k].length,0);
-   let foldersHtml = folderNames.map(folder=>{
-     let files=grouped[folder];
-     let folderKey = repo.name+'::'+folder;
-     let isFolderCollapsed = localStorage.getItem('collapsed_folder_'+folderKey);
-     if(isFolderCollapsed===null) isFolderCollapsed='1';
-     let fCollapsed = isFolderCollapsed==='1';
-     let folderLabel = folder==='/' ? '(root)' : folder;
-     return `
-     <div class="folder-group border-t border-[#eaeef2]">
-       <div class="flex items-center gap-2 px-4 py-1.5 bg-white hover:bg-[#f6f8fa] cursor-pointer select-none pl-8" onclick="toggleFolder('${folderKey.replace(/'/g, "\'")}')">
-         <span class="text-[11px]">${fCollapsed?'▸':'▾'}</span>
-         <span class="text-[13px]">${folder==='/'?'🗂️':'📁'}</span>
-         <span class="text-[12px] font-medium">${folderLabel}</span>
-         <span class="text-[10px] text-[#8b949e]">${files.length} files</span>
-         ${folder!=='/' ? (grouped[folder].hasIndex ? `<a href="https://${user}.github.io/${repo.name}/${folder}/" target="_blank" class="ml-2 text-[10px] text-[#57606a] hover:text-[#24292f] hover:underline" onclick="event.stopPropagation()">/${folder}/</a>` : ``) : ''}
-       </div>
-       <div class="folder-body ${fCollapsed?'hidden':''}" id="folder-${CSS.escape(folderKey)}">
-         ${files.map(l=>{
-           let selId=l.repo+'::'+l.filePath;
-           let isSel=selected.has(selId);
-           let displayName = customNames[l.key] || l.label;
-           let hasNote = !!customNames[l.key];
-           return `
-           <div data-sel="${selId}" class="file-row ${isSel?'selected':''} flex items-center justify-between pl-8 pr-3 py-1.5 text-[12px] group border-t border-[#f6f8fa]">
-             <div class="flex items-center gap-2 min-w-0 flex-1">
-               <input type="checkbox" ${isSel?'checked':''} onchange="toggleSelect('${l.repo}','${l.filePath}','${l.key}')" class="w-3 h-3">
-               <span class="text-[11px] text-[#8b949e]">↳</span>
-               <span class="truncate ${hasNote?'font-medium text-[#24292f]':''}" title="${l.path} - double click để đổi tên dễ nhớ (chỉ lưu máy bạn)" ondblclick="editNote('${l.key.replace(/'/g, "\'")}')">${displayName}</span>
-               ${hasNote?`<span class="ml-1 text-[9px] bg-[#f6f8fa] text-[#57606a] px-1 rounded">note</span>`:''}
-             </div>
-             <div class="flex items-center gap-1">
-               <a href="${l.url}" target="_blank" class="text-[11px] bg-[#0d1117] text-white px-2.5 py-1 rounded-md">OPEN</a>
-               <button onclick="copyLink('${l.url}')" class="text-[11px] border bg-white px-2.5 py-1 rounded-md">Copy</button>
-               <div class="dropdown">
-                 <button onclick="toggleMenu('${selId}')" class="text-[11px] border bg-white px-2 py-1 rounded-md">⋯</button>
-                 <div id="menu-${selId}" class="dropdown-menu hidden">
-                   <button onclick="editNote('${l.key.replace(/'/g, "\'")}');closeAllMenus()">📝 Edit ghi chú (lưu máy bạn) - đổi tên dễ nhớ</button>
-                   <button onclick="editFile('${l.repo}','${l.filePath}');closeAllMenus()">✏️ Edit Real (sửa file thật trên Github)</button>
-                   <button onclick="window.open('${l.githubUrl}','_blank');closeAllMenus()">🔗 Github</button>
-                   <button onclick="deleteFile('${l.repo}','${l.filePath}');closeAllMenus()" class="text-[#cf222e]">🗑️ Del (xóa thật)</button>
-                 </div>
-               </div>
-             </div>
-           </div>
-           `;
-         }).join('')}
-       </div>
-     </div>
-     `;
-   }).join('');
-   section.innerHTML=`
-     <div class="repo-header px-3 py-2 bg-[#f6f8fa] flex items-center gap-2 cursor-pointer select-none" onclick="toggleRepo('${repo.name}')">
-       <span class="text-[12px]">${repoCollapsed?'▸':'▾'}</span>
-       <span class="font-semibold text-[13px] text-[#24292f]">${displayRepoName}</span>
-       ${repo.private?'<span class="text-[10px] border rounded-full px-1.5">private</span>':''}
-       
-       ${grouped['/'].hasIndex ? `<a href="https://${user}.github.io/${repo.name}/" target="_blank" class="ml-auto text-[11px] text-[#57606a] hover:text-[#24292f] hover:underline" onclick="event.stopPropagation()">/${user}.github.io/${repo.name}/</a>` : ``}
-     </div>
-     <div class="repo-body ${repoCollapsed?'hidden':''}" id="body-${repo.name}">
-       ${foldersHtml || `<div class="pl-8 pr-3 py-2 text-[11px] text-[#8b949e]">No HTML files (only files with index.html will show usable link)</div>`}
-     </div>
-   `;
-   out.appendChild(section);
- }
-}
 function toggleRepo(name){
  let body=document.getElementById('body-'+name);
  if(!body) return;
@@ -265,18 +351,23 @@ function toggleFolder(key){
  body.classList.toggle('hidden');
  localStorage.setItem('collapsed_folder_'+key, isHidden?'0':'1');
 }
-
-function editNote(key){
+function collapseAll(){
+ document.querySelectorAll('.repo-body').forEach(b=>b.classList.add('hidden'));
+ document.querySelectorAll('.folder-body').forEach(b=>b.classList.add('hidden'));
+ document.querySelectorAll('[id^="body-"]').forEach(b=>{ localStorage.setItem('collapsed_'+b.id.replace('body-',''),'1'); });
+}
+function openAll(){
+ document.querySelectorAll('.repo-body').forEach(b=>b.classList.remove('hidden'));
+ document.querySelectorAll('.folder-body').forEach(b=>b.classList.remove('hidden'));
+ document.querySelectorAll('[id^="body-"]').forEach(b=>{ localStorage.setItem('collapsed_'+b.id.replace('body-',''),'0'); });
+}
+async function editNote(key){
  let cur=customNames[key]||'';
- let nv=prompt('Đổi tên hiển thị dễ nhớ (chỉ lưu ở máy bạn, không đổi file thật trên Github):\nVí dụ: Khách A - chốt v1, Landing chốt, v.v...\n\nĐể trống để xóa ghi chú:', cur);
+ let nv=await customPrompt('Đổi tên hiển thị dễ nhớ (chỉ lưu ở máy bạn):', cur, 'VD: Khách A - chốt v1');
  if(nv===null) return;
- if(nv.trim()===''){
-   delete customNames[key];
- } else {
-   customNames[key]=nv.trim();
- }
+ if(nv.trim()===''){ delete customNames[key]; } else { customNames[key]=nv.trim(); }
  localStorage.setItem('customNames', JSON.stringify(customNames));
- renderRepos(reposCache);
+ let cache=loadCache(); if(cache) renderReposFromGrouped(cache.repos, cache.groupedData); else renderFromCache();
 }
 function toggleMenu(id){
  let menu=document.getElementById('menu-'+id);
@@ -288,140 +379,9 @@ function toggleMenu(id){
 function closeAllMenus(){
  document.querySelectorAll('.dropdown-menu').forEach(m=>m.classList.add('hidden'));
 }
-document.addEventListener('click', function(e){
- if(!e.target.closest('.dropdown')) closeAllMenus();
-});
+document.addEventListener('click', function(e){ if(!e.target.closest('.dropdown')) closeAllMenus(); });
+function copyLink(url){ navigator.clipboard.writeText(url); const s=document.getElementById('syncStatus'); let old=s.innerText; s.innerText='copied!'; setTimeout(()=>s.innerText=old,1200); }
 
-function copyLink(url){ navigator.clipboard.writeText(url); }
-function collapseAll(){
- document.querySelectorAll('.repo-body').forEach(b=>b.classList.add('hidden'));
- document.querySelectorAll('.folder-body').forEach(b=>b.classList.add('hidden'));
- document.querySelectorAll('[id^="body-"]').forEach(b=>{ localStorage.setItem('collapsed_'+b.id.replace('body-',''),'1'); });
- // save folder collapsed
- document.querySelectorAll('.folder-group').forEach(g=>{
-   let btn=g.querySelector('[onclick^="toggleFolder"]');
-   if(btn){ let m=btn.getAttribute('onclick').match(/toggleFolder\('(.+)'\)/); if(m) localStorage.setItem('collapsed_folder_'+m[1],'1'); }
- });
-}
-function openAll(){
- document.querySelectorAll('.repo-body').forEach(b=>b.classList.remove('hidden'));
- document.querySelectorAll('.folder-body').forEach(b=>b.classList.remove('hidden'));
- document.querySelectorAll('[id^="body-"]').forEach(b=>{ localStorage.setItem('collapsed_'+b.id.replace('body-',''),'0'); });
- document.querySelectorAll('.folder-group').forEach(g=>{
-   let btn=g.querySelector('[onclick^="toggleFolder"]');
-   if(btn){ let m=btn.getAttribute('onclick').match(/toggleFolder\('(.+)'\)/); if(m) localStorage.setItem('collapsed_folder_'+m[1],'0'); }
- });
-}
-async function moveSelected(){
- if(selected.size===0) return;
- let token=localStorage.getItem('gh_token'); if(!token){ alert('Cần token có quyền repo để move thật'); return; }
- // check if multi-repo selection
- let repos=[...new Set([...selected.values()].map(v=>v.repo))];
- let targetRepo = repos.length===1 ? repos[0] : null;
- let newRepo = prompt(`Bạn đang chọn ${selected.size} file từ repo: ${repos.join(', ')}
-
-Nhập repo đích (để trống = giữ nguyên repo cũ, nếu chọn nhiều repo khác nhau thì phải nhập repo đích chung):`, targetRepo||'');
- if(newRepo===null) return;
- if(!newRepo) newRepo=null; // keep original per file
-
- let targetFolder = prompt('Nhập folder đích (ví dụ: lab/ hoặc website/new/ hoặc để trống = root /):','lab/');
- if(targetFolder===null) return;
- targetFolder = targetFolder.trim();
- if(targetFolder && !targetFolder.endsWith('/')) targetFolder+='/';
- if(targetFolder==='/' ) targetFolder='';
-
- if(!confirm(`Move ${selected.size} file(s) tới ${newRepo?newRepo+'/':'(giữ repo cũ)'}${targetFolder||'(root)'} ? Đây là move thật trên Github (tạo file mới + xóa file cũ).`)) return;
-
- for(let [id, info] of selected){
-   let destRepo = newRepo || info.repo;
-   let fileName = info.path.split('/').pop();
-   let destPath = targetFolder + fileName;
-   try{
-     // get source content
-     let srcRes=await fetch(`https://api.github.com/repos/leha-os/${info.repo}/contents/${info.path}?ref=main`,{headers:getHeaders()});
-     if(!srcRes.ok) srcRes=await fetch(`https://api.github.com/repos/leha-os/${info.repo}/contents/${info.path}?ref=master`,{headers:getHeaders()});
-     if(!srcRes.ok){ alert('Không lấy được '+info.path); continue; }
-     let srcData=await srcRes.json();
-     // create at dest
-     let createRes=await fetch(`https://api.github.com/repos/leha-os/${destRepo}/contents/${destPath}`,{
-       method:'PUT',
-       headers:{...getHeaders(),'Content-Type':'application/json'},
-       body: JSON.stringify({message:`Move ${info.path} to ${destPath} via links manager`, content: srcData.content})
-     });
-     if(!createRes.ok){ alert('Tạo mới thất bại '+destPath+': '+(await createRes.text())); continue; }
-     // delete source if different path/repo
-     if(destRepo!==info.repo || destPath!==info.path){
-       let delRes=await fetch(`https://api.github.com/repos/leha-os/${info.repo}/contents/${info.path}`,{
-         method:'DELETE',
-         headers:{...getHeaders(),'Content-Type':'application/json'},
-         body: JSON.stringify({message:`Delete after move to ${destRepo}/${destPath}`, sha: srcData.sha})
-       });
-       if(!delRes.ok){ alert('Đã tạo mới nhưng xóa cũ thất bại: '+info.path); }
-     }
-   }catch(e){ alert('Lỗi move '+info.path+': '+e.message); }
- }
- alert('Move xong');
- clearSelection();
- scanAll();
-}
-async function deleteSelected(){
- if(selected.size===0) return;
- const okDel=await customConfirm(`Xóa ${selected.size} file đã chọn? Không khôi phục được.`, `Xóa ${selected.size} files`);
- if(!okDel) return;
- for(let [id, info] of selected){
-   await deleteFile(info.repo, info.path, true);
- }
- clearSelection();
- scanAll();
-}
-
-document.getElementById('unlock').onclick=()=>{
- let pin=document.getElementById('pin').value.trim();
- if(!pin){ alert('Enter PIN'); return; }
- localStorage.setItem('leha_pin', pin);
- let token=document.getElementById('token').value.trim();
- if(token) localStorage.setItem('gh_token', token);
- document.getElementById('lock').classList.add('hidden');
- document.getElementById('app').classList.remove('hidden');
- scanAll();
-};
-document.getElementById('scanBtn').onclick=scanAll;
-document.getElementById('collapseAllBtn').onclick=collapseAll;
-document.getElementById('openAllBtn').onclick=openAll;
-document.getElementById('search').addEventListener('input',()=>renderRepos(reposCache));
-let savedPin=localStorage.getItem('leha_pin');
-let savedToken=localStorage.getItem('gh_token');
-if(savedPin){
- document.getElementById('pin').value=savedPin;
- if(savedToken) document.getElementById('token').value=savedToken;
- document.getElementById('lock').classList.add('hidden');
- document.getElementById('app').classList.remove('hidden');
- scanAll();
-}
-</script>
-
-
-
-<!-- Beautiful custom modal -->
-<div id="customModal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 z-[60]">
-  <div class="bg-white rounded-xl border border-[#d0d7de] shadow-xl w-full max-w-[380px] overflow-hidden animate-[fadeIn_0.15s]">
-    <div class="px-5 pt-5 pb-3">
-      <h3 id="customModalTitle" class="text-[14px] font-semibold text-[#24292f]">Xác nhận</h3>
-      <p id="customModalMsg" class="text-[13px] text-[#57606a] mt-2 leading-5">Bạn có chắc?</p>
-      <div id="customModalInputWrap" class="hidden mt-3">
-        <input id="customModalInput" type="text" class="w-full border border-[#d0d7de] rounded-md px-3 py-2 text-[13px] focus:outline-none focus:border-[#0969da] focus:ring-1 focus:ring-[#0969da]" placeholder="">
-      </div>
-    </div>
-    <div class="px-5 py-3 bg-[#f6f8fa] border-t flex justify-end gap-2">
-      <button id="customModalCancel" class="px-4 py-1.5 text-[12px] border bg-white rounded-md hover:bg-[#f6f8fa]">Hủy</button>
-      <button id="customModalOk" class="px-4 py-1.5 text-[12px] bg-[#0d1117] text-white rounded-md hover:bg-black">OK</button>
-    </div>
-  </div>
-</div>
-<style>
-@keyframes fadeIn { from { opacity:0; transform: scale(0.96); } to { opacity:1; transform: scale(1); } }
-</style>
-<script>
 function showCustomModal({title, msg, input, placeholder, okText, danger}){
  return new Promise(resolve=>{
   const modal=document.getElementById('customModal');
@@ -431,17 +391,16 @@ function showCustomModal({title, msg, input, placeholder, okText, danger}){
   const inputEl=document.getElementById('customModalInput');
   const okBtn=document.getElementById('customModalOk');
   const cancelBtn=document.getElementById('customModalCancel');
-  if(input){
+  if(input!==undefined){
     inputWrap.classList.remove('hidden');
     inputEl.value=input;
     inputEl.placeholder=placeholder||'';
     setTimeout(()=>inputEl.focus(),100);
-    inputEl.select();
   } else {
     inputWrap.classList.add('hidden');
   }
   okBtn.innerText=okText||'OK';
-  okBtn.className = danger ? 'px-4 py-1.5 text-[12px] bg-[#cf222e] text-white rounded-md hover:bg-[#a40e26]' : 'px-4 py-1.5 text-[12px] bg-[#0d1117] text-white rounded-md hover:bg-black';
+  okBtn.className = danger ? 'px-4 py-2 text-[13px] bg-[#cf222e] text-white rounded-md hover:bg-[#a40e26]' : 'px-4 py-2 text-[13px] bg-[#0d1117] text-white rounded-md hover:bg-black';
   modal.classList.remove('hidden');
   function cleanup(result){
     modal.classList.add('hidden');
@@ -451,16 +410,10 @@ function showCustomModal({title, msg, input, placeholder, okText, danger}){
     inputEl.removeEventListener('keydown', onKey);
     resolve(result);
   }
-  function onOk(){
-    if(inputWrap.classList.contains('hidden')) cleanup(true);
-    else cleanup(inputEl.value);
-  }
+  function onOk(){ if(inputWrap.classList.contains('hidden')) cleanup(true); else cleanup(inputEl.value); }
   function onCancel(){ cleanup(null); }
   function onOutside(e){ if(e.target===modal) cleanup(null); }
-  function onKey(e){
-    if(e.key==='Enter') onOk();
-    if(e.key==='Escape') onCancel();
-  }
+  function onKey(e){ if(e.key==='Enter') onOk(); if(e.key==='Escape') onCancel(); }
   okBtn.addEventListener('click', onOk);
   cancelBtn.addEventListener('click', onCancel);
   modal.addEventListener('click', onOutside);
@@ -473,30 +426,104 @@ async function customConfirm(msg, title){
 }
 async function customPrompt(msg, def, placeholder){
   const r=await showCustomModal({title:'Nhập thông tin', msg, input:def||'', placeholder:placeholder||'', okText:'OK', danger:false});
-  return r; // string or null
+  return r;
+}
+
+async function moveSelected(){
+ if(selected.size===0) return;
+ let token=localStorage.getItem('gh_token'); if(!token){ await showCustomModal({title:'Thiếu token', msg:'Cần token có quyền repo để move', okText:'OK'}); return; }
+ let repos=[...new Set([...selected.values()].map(v=>v.repo))];
+ let targetRepo = repos.length===1 ? repos[0] : null;
+ let newRepo = await customPrompt(`Bạn đang chọn ${selected.size} file từ repo: ${repos.join(', ')}\nNhập repo đích (để trống = giữ nguyên):`, targetRepo||'', 'tên repo đích');
+ if(newRepo===null) return;
+ if(!newRepo) newRepo=null;
+ let targetFolder = await customPrompt('Nhập folder đích (ví dụ: lab/ hoặc để trống = root):','lab/', 'lab/');
+ if(targetFolder===null) return;
+ targetFolder = targetFolder.trim();
+ if(targetFolder && !targetFolder.endsWith('/')) targetFolder+='/';
+ if(targetFolder==='/' ) targetFolder='';
+ const okMove = await showCustomModal({title:`Move ${selected.size} files`, msg:`Move tới ${newRepo?newRepo+'/':'(giữ repo cũ)'}${targetFolder||'(root)'} ?`, okText:'Move'});
+ if(!okMove) return;
+ for(let [id, info] of selected){
+   let destRepo = newRepo || info.repo;
+   let fileName = info.path.split('/').pop();
+   let destPath = targetFolder + fileName;
+   try{
+     let srcRes=await fetch(`https://api.github.com/repos/leha-os/${info.repo}/contents/${info.path}?ref=main`,{headers:getHeaders()});
+     if(!srcRes.ok) srcRes=await fetch(`https://api.github.com/repos/leha-os/${info.repo}/contents/${info.path}?ref=master`,{headers:getHeaders()});
+     if(!srcRes.ok) continue;
+     let srcData=await srcRes.json();
+     let createRes=await fetch(`https://api.github.com/repos/leha-os/${destRepo}/contents/${destPath}`,{
+       method:'PUT',
+       headers:{...getHeaders(),'Content-Type':'application/json'},
+       body: JSON.stringify({message:`Move ${info.path} to ${destPath}`, content: srcData.content})
+     });
+     if(!createRes.ok) continue;
+     if(destRepo!==info.repo || destPath!==info.path){
+       await fetch(`https://api.github.com/repos/leha-os/${info.repo}/contents/${info.path}`,{
+         method:'DELETE',
+         headers:{...getHeaders(),'Content-Type':'application/json'},
+         body: JSON.stringify({message:`Delete after move`, sha: srcData.sha})
+       });
+     }
+   }catch(e){}
+ }
+ clearSelection();
+ scanAll(true);
+}
+async function deleteSelected(){
+ if(selected.size===0) return;
+ const okDel=await customConfirm(`Xóa ${selected.size} file đã chọn? Không khôi phục được.`, `Xóa ${selected.size} files`);
+ if(!okDel) return;
+ for(let [id, info] of selected){
+   await deleteFile(info.repo, info.path, true);
+ }
+ clearSelection();
+ scanAll(true);
+}
+
+document.getElementById('unlock').onclick=()=>{
+ let pin=document.getElementById('pin').value.trim();
+ if(!pin){ alert('Enter PIN'); return; }
+ localStorage.setItem('leha_pin', pin);
+ let token=document.getElementById('token').value.trim();
+ if(token) localStorage.setItem('gh_token', token);
+ document.getElementById('lock').classList.add('hidden');
+ document.getElementById('app').classList.remove('hidden');
+ if(!renderFromCache()) scanAll();
+};
+document.getElementById('scanBtn').onclick=()=>scanAll(true);
+document.getElementById('collapseAllBtn').onclick=collapseAll;
+document.getElementById('openAllBtn').onclick=openAll;
+document.getElementById('search').addEventListener('input',()=>{ let c=loadCache(); if(c) renderReposFromGrouped(c.repos, c.groupedData); });
+let savedPin=localStorage.getItem('leha_pin');
+let savedToken=localStorage.getItem('gh_token');
+if(savedPin){
+ document.getElementById('pin').value=savedPin;
+ if(savedToken) document.getElementById('token').value=savedToken;
+ document.getElementById('lock').classList.add('hidden');
+ document.getElementById('app').classList.remove('hidden');
+ if(!renderFromCache()) scanAll();
 }
 </script>
 
 <div id="editModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center p-2 z-50">
   <div class="bg-white rounded-lg border w-full max-w-4xl max-h-[95vh] flex flex-col">
     <div class="px-4 py-3 border-b flex justify-between items-center bg-[#f6f8fa] rounded-t-lg">
-      <div><span id="editTitle" class="text-[13px] font-semibold">Edit</span><div id="editPath" class="text-[11px] text-[#57606a]"></div></div>
+      <div><span id="editTitle" class="text-[14px] font-semibold">Edit</span><div id="editPath" class="text-[12px] text-[#57606a]"></div></div>
       <button onclick="closeModal()" class="w-7 h-7 rounded-full hover:bg-[#d0d7de] flex items-center justify-center">✕</button>
     </div>
-    <div class="px-4 py-3 border-b bg-[#fff8c5] flex flex-wrap gap-2 items-center text-[12px]">
+    <div class="px-4 py-3 border-b bg-[#fff8c5] flex flex-wrap gap-2 items-center text-[13px]">
       <span class="font-semibold">⚡</span>
       <button onclick="applyBGConfig()" class="bg-[#0d1117] text-white px-4 py-2 rounded-md font-medium">BG_CONFIG → Replace to</button>
       <button onclick="applyHeroLogo()" class="bg-white border px-4 py-2 rounded-md">HERO_CONFIG → Replace to</button>
     </div>
     <div class="p-3 flex-1 overflow-hidden flex flex-col">
-      <textarea id="editContent" class="w-full flex-1 min-h-[420px] border rounded-md p-3 text-[12px] font-mono"></textarea>
+      <textarea id="editContent" class="w-full flex-1 min-h-[420px] border rounded-md p-3 text-[13px] font-mono"></textarea>
     </div>
-    <div class="px-4 py-3 border-t flex justify-between items-center bg-[#f6f8fa] rounded-b-lg">
-      <span class="text-[11px] text-[#57606a]"></span>
-      <div class="flex gap-2">
-        <button onclick="closeModal()" class="border bg-white px-4 py-2 text-[12px] rounded-md">Cancel</button>
-        <button onclick="saveFile()" class="bg-[#2ea043] text-white px-8 py-2.5 text-[13px] font-bold rounded-md">Save</button>
-      </div>
+    <div class="px-4 py-3 border-t flex justify-end gap-2 bg-[#f6f8fa] rounded-b-lg">
+      <button onclick="closeModal()" class="border bg-white px-4 py-2 text-[13px] rounded-md">Cancel</button>
+      <button onclick="saveFile()" class="bg-[#2ea043] text-white px-8 py-2.5 text-[14px] font-bold rounded-md">Save</button>
     </div>
   </div>
 </div>
@@ -508,21 +535,18 @@ function b64DecodeUtf8(b64){
     const binary=atob(b64);
     const bytes=Uint8Array.from(binary, c=>c.charCodeAt(0));
     return new TextDecoder('utf-8').decode(bytes);
-  }catch(e){
-    return atob(b64);
-  }
+  }catch(e){ return atob(b64); }
 }
 function b64EncodeUtf8(str){
   const bytes=new TextEncoder().encode(str);
-  let binary='';
-  bytes.forEach(b=>binary+=String.fromCharCode(b));
+  let binary=''; bytes.forEach(b=>binary+=String.fromCharCode(b));
   return btoa(binary);
 }
 async function editFile(repo,filePath){
- let token=localStorage.getItem('gh_token'); if(!token){alert('Can token');return;}
+ let token=localStorage.getItem('gh_token'); if(!token){ await showCustomModal({title:'Thiếu token', msg:'Cần token'}); return; }
  let res=await fetch('https://api.github.com/repos/leha-os/'+repo+'/contents/'+filePath+'?ref=main',{headers:getHeaders()});
  if(!res.ok) res=await fetch('https://api.github.com/repos/leha-os/'+repo+'/contents/'+filePath+'?ref=master',{headers:getHeaders()});
- if(!res.ok){alert('Fetch failed '+res.status);return;}
+ if(!res.ok){ await showCustomModal({title:'Lỗi', msg:'Fetch failed '+res.status}); return; }
  let data=await res.json();
  let content=b64DecodeUtf8(data.content);
  curEdit={repo,path:filePath,sha:data.sha};
@@ -533,42 +557,32 @@ async function editFile(repo,filePath){
 }
 function applyBGConfig(){
   let ta=document.getElementById('editContent');
-  let newBG = "const BG_CONFIG = {\n  type: \"radial_breath\",\n  radial: {\n    colors: [\"#0f172a\", \"#1e293b\", \"#334155\"],\n    breatheDuration: 8000,\n    scale: [1, 1.08, 1],\n    opacity: 0.6\n  },\n  noise: {\n    enabled: true,\n    opacity: 0.03,\n    size: 200\n  },\n  dust: {\n    enabled: true,\n    count: 40,\n    speed: 0.15,\n    size: [1, 2.5],\n    opacity: [0.1, 0.4],\n    drift: true\n  }\n};";
+  let newBG = "const BG_CONFIG = {\n  type: \"radial_breath\",\n  radial: {\n    colors: [\"#0f172a\", \"#1e293b\", \"#334155\"],\n    breatheDuration: 8000,\n    scale: [1, 1.08, 1],\n    opacity: 0.6\n  },\n  noise: { enabled: true, opacity: 0.03, size: 200 },\n  dust: { enabled: true, count: 40, speed: 0.15, size: [1, 2.5], opacity: [0.1, 0.4], drift: true }\n};";
   let old=ta.value;
-  if(old.indexOf('BG_CONFIG')!==-1){
-    ta.value = old.replace(/const\s+BG_CONFIG\s*=\s*\{[\s\S]*?\n\};/, newBG);
-    if(ta.value===old) ta.value = old.replace(/BG_CONFIG[\s\S]*?\};/, newBG.replace('const ',''));
-  } else {
-    ta.value = newBG + "\n\n" + old;
-  }
+  if(old.indexOf('BG_CONFIG')!==-1){ ta.value = old.replace(/const\s+BG_CONFIG\s*=\s*\{[\s\S]*?\n\};/, newBG); if(ta.value===old) ta.value = old.replace(/BG_CONFIG[\s\S]*?\};/, newBG.replace('const ','')); } else { ta.value = newBG + "\n\n" + old; }
 }
 function applyHeroLogo(){
   let ta=document.getElementById('editContent');
-  let newHero = "const HERO_CONFIG = {\n  type: \"logo\",\n  logo: {\n    src: \"/assets/logo.svg\",\n    width: 180,\n    height: 180,\n    animate: \"float_gentle\"\n  },\n  centered: true\n};";
+  let newHero = "const HERO_CONFIG = {\n  type: \"logo\",\n  logo: { src: \"/assets/logo.svg\", width: 180, height: 180, animate: \"float_gentle\" },\n  centered: true\n};";
   let old=ta.value;
-  if(old.indexOf('HERO_CONFIG')!==-1){
-    ta.value = old.replace(/const\s+HERO_CONFIG\s*=\s*\{[\s\S]*?\n\};/, newHero);
-    if(ta.value===old) ta.value = old.replace(/HERO_CONFIG[\s\S]*?\};/, newHero.replace('const ',''));
-  } else {
-    ta.value = newHero + "\n\n" + old;
-  }
+  if(old.indexOf('HERO_CONFIG')!==-1){ ta.value = old.replace(/const\s+HERO_CONFIG\s*=\s*\{[\s\S]*?\n\};/, newHero); if(ta.value===old) ta.value = old.replace(/HERO_CONFIG[\s\S]*?\};/, newHero.replace('const ','')); } else { ta.value = newHero + "\n\n" + old; }
 }
 function closeModal(){document.getElementById('editModal').classList.add('hidden');}
 async function saveFile(){
  let txt=document.getElementById('editContent').value;
  let b64=b64EncodeUtf8(txt);
- let res=await fetch('https://api.github.com/repos/leha-os/'+curEdit.repo+'/contents/'+curEdit.path,{method:'PUT',headers:{...getHeaders(),'Content-Type':'application/json'},body:JSON.stringify({message:'Edit '+curEdit.path+' via links - fix UTF8 + BG/HERO',content:b64,sha:curEdit.sha})});
- if(res.ok){alert('Saved');closeModal();scanAll();} else {alert('Failed '+(await res.text()));}
+ let res=await fetch('https://api.github.com/repos/leha-os/'+curEdit.repo+'/contents/'+curEdit.path,{method:'PUT',headers:{...getHeaders(),'Content-Type':'application/json'},body:JSON.stringify({message:'Edit '+curEdit.path,content:b64,sha:curEdit.sha})});
+ if(res.ok){ await showCustomModal({title:'Đã lưu', msg:'Saved!'}); closeModal(); scanAll(true); } else { await showCustomModal({title:'Lỗi', msg:await res.text()}); }
 }
 async function deleteFile(repo,filePath, silent){
- let token=localStorage.getItem('gh_token'); if(!token){alert('Need token');return;}
+ let token=localStorage.getItem('gh_token'); if(!token){ return; }
  if(!silent){ const ok=await customConfirm('Xóa file '+repo+'/'+filePath+'? Không khôi phục được.', 'Xóa file'); if(!ok) return; }
  let r=await fetch('https://api.github.com/repos/leha-os/'+repo+'/contents/'+filePath+'?ref=main',{headers:getHeaders()});
  if(!r.ok) r=await fetch('https://api.github.com/repos/leha-os/'+repo+'/contents/'+filePath+'?ref=master',{headers:getHeaders()});
- if(!r.ok){if(!silent) alert('Cannot get sha');return;}
+ if(!r.ok) return;
  let d=await r.json();
  let del=await fetch('https://api.github.com/repos/leha-os/'+repo+'/contents/'+filePath,{method:'DELETE',headers:{...getHeaders(),'Content-Type':'application/json'},body:JSON.stringify({message:'Delete '+filePath,sha:d.sha})});
- if(del.ok){if(!silent) {alert('Deleted'); scanAll();}} else {if(!silent) alert('Delete failed '+(await del.text()));}
+ if(del.ok && !silent){ await showCustomModal({title:'Đã xóa', msg:'Deleted'}); scanAll(true); }
 }
 </script>
 </body>
