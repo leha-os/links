@@ -167,7 +167,7 @@ async function renderRepos(repos){
          allLinks.push(pub);
        }
      });
-     // If folder has no html at all, remove it later; but if it has no index, we still keep it to show its files (v1.html etc) - however its own /folder/ link is not usable
+     // If folder has no html at all, remove it later; but if it has , we still keep it to show its files (v1.html etc) - however its own /folder/ link is not usable
      grouped[folder.path].hasIndex = hasFolderIndex;
    }
    grouped['/'].hasIndex = hasRootIndex;
@@ -195,7 +195,7 @@ async function renderRepos(repos){
          <span class="text-[13px]">${folder==='/'?'🗂️':'📁'}</span>
          <span class="text-[12px] font-medium">${folderLabel}</span>
          <span class="text-[10px] text-[#8b949e]">${files.length} files</span>
-         ${folder!=='/' ? (grouped[folder].hasIndex ? `<a href="https://${user}.github.io/${repo.name}/${folder}/" target="_blank" class="ml-2 text-[10px] bg-[#ddf4ff] text-[#0969da] border px-1.5 py-0 rounded" onclick="event.stopPropagation()">/${folder}/ → OPEN</a>` : `<span class="ml-2 text-[10px] text-[#cf222e] border border-dashed px-1.5 py-0 rounded" title="Folder này không có index.html nên link /${folder}/ sẽ 404">no index → 404</span>`) : ''}
+         ${folder!=='/' ? (grouped[folder].hasIndex ? `<a href="https://${user}.github.io/${repo.name}/${folder}/" target="_blank" class="ml-2 text-[10px] text-[#0969da] hover:underline" onclick="event.stopPropagation()">/${folder}/</a>` : ``) : ''}
        </div>
        <div class="folder-body ${fCollapsed?'hidden':''}" id="folder-${CSS.escape(folderKey)}">
          ${files.map(l=>{
@@ -229,7 +229,7 @@ async function renderRepos(repos){
        <span class="font-semibold text-[13px] text-[#0969da]">${displayRepoName}</span>
        ${repo.private?'<span class="text-[10px] border rounded-full px-1.5">private</span>':''}
        
-       ${grouped['/'].hasIndex ? `<a href="https://${user}.github.io/${repo.name}/" target="_blank" class="ml-auto text-[11px] bg-[#ddf4ff] text-[#0969da] border border-[#54aeff] px-2 py-0.5 rounded-md" onclick="event.stopPropagation()">/${repo.name}/ → OPEN (index)</a>` : `<span class="ml-auto text-[11px] text-[#8b949e] border border-dashed px-2 py-0.5 rounded-md" title="Không có index.html nên /${repo.name}/ sẽ 404 - chỉ dùng link file v1/v2 bên trong">no index → 404</span>`}
+       ${grouped['/'].hasIndex ? `<a href="https://${user}.github.io/${repo.name}/" target="_blank" class="ml-auto text-[11px] text-[#0969da] hover:underline" onclick="event.stopPropagation()">/${user}.github.io/${repo.name}/</a>` : ``}
      </div>
      <div class="repo-body ${repoCollapsed?'hidden':''}" id="body-${repo.name}">
        ${foldersHtml || `<div class="pl-8 pr-3 py-2 text-[11px] text-[#8b949e]">No HTML files (only files with index.html will show usable link)</div>`}
@@ -368,19 +368,18 @@ if(savedPin){
       <button onclick="closeModal()" class="w-7 h-7 rounded-full hover:bg-[#d0d7de] flex items-center justify-center">✕</button>
     </div>
     <div class="px-4 py-3 border-b bg-[#fff8c5] flex flex-wrap gap-2 items-center text-[12px]">
-      <span class="font-semibold">⚡ Quick Replace:</span>
-      <button onclick="applyBGConfig()" class="bg-[#0d1117] text-white px-4 py-2 rounded-md font-medium">BG_CONFIG → radial thở nhẹ + noise + hạt bụi siêu chậm</button>
-      <button onclick="applyHeroLogo()" class="bg-white border px-4 py-2 rounded-md">HERO_CONFIG → logo</button>
-      <span class="text-[11px] text-[#57606a]">Fix UTF-8 xong, không còn lỗi font</span>
+      <span class="font-semibold">⚡</span>
+      <button onclick="applyBGConfig()" class="bg-[#0d1117] text-white px-4 py-2 rounded-md font-medium">BG_CONFIG → Replace to</button>
+      <button onclick="applyHeroLogo()" class="bg-white border px-4 py-2 rounded-md">HERO_CONFIG → Replace to</button>
     </div>
     <div class="p-3 flex-1 overflow-hidden flex flex-col">
       <textarea id="editContent" class="w-full flex-1 min-h-[420px] border rounded-md p-3 text-[12px] font-mono"></textarea>
     </div>
     <div class="px-4 py-3 border-t flex justify-between items-center bg-[#f6f8fa] rounded-b-lg">
-      <span class="text-[11px] text-[#57606a]">Save sẽ sync thật lên Github</span>
+      <span class="text-[11px] text-[#57606a]"></span>
       <div class="flex gap-2">
         <button onclick="closeModal()" class="border bg-white px-4 py-2 text-[12px] rounded-md">Cancel</button>
-        <button onclick="saveFile()" class="bg-[#2ea043] text-white px-8 py-2.5 text-[13px] font-bold rounded-md">💾 REPLACE TO - Save thật</button>
+        <button onclick="saveFile()" class="bg-[#2ea043] text-white px-8 py-2.5 text-[13px] font-bold rounded-md">Save</button>
       </div>
     </div>
   </div>
