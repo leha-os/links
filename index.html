@@ -19,7 +19,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,san
 <span class="font-semibold text-sm">leha-os / links <span class="ml-2 text-[11px] bg-[#1f6feb] px-2 py-0.5 rounded-full">PRIVATE</span></span>
 </div>
 <div class="flex items-center gap-2">
-<span id="syncStatus" class="text-[11px] text-[#8b949e]">auto-sync ON</span>
+<span id="syncStatus" class="text-[11px] text-[#8b949e]">manual • click Sync now when you add v1/v2</span>
 <div class="w-2 h-2 bg-[#2ea043] rounded-full animate-pulse"></div>
 </div>
 </div>
@@ -77,18 +77,26 @@ async function fetchContents(user, repo, path=''){
 async function scanAll(){
  let user='leha-os';
  let headers=getHeaders();
- let res=await fetch(`https://api.github.com/user/repos?per_page=100&sort=updated`,{headers});
- let repos=[];
- if(res.ok && localStorage.getItem('gh_token')){
-   let data=await res.json();
-   repos=data.filter(r=>r.owner.login.toLowerCase()==user.toLowerCase());
+ let btn=document.getElementById('scanBtn');
+ let oldText=btn?btn.innerText:'';
+ if(btn){ btn.innerText='Syncing...'; btn.disabled=true; }
+ try{
+   let res=await fetch(`https://api.github.com/user/repos?per_page=100&sort=updated`,{headers});
+   let repos=[];
+   if(res.ok && localStorage.getItem('gh_token')){
+     let data=await res.json();
+     repos=data.filter(r=>r.owner.login.toLowerCase()==user.toLowerCase());
+   }
+   if(!repos.length){
+     let r2=await fetch(`https://api.github.com/users/${user}/repos?per_page=100&sort=updated`,{headers});
+     repos=await r2.json();
+   }
+   reposCache=repos;
+   await renderRepos(repos);
+   localStorage.setItem('lastSyncTime', new Date().toISOString());
+ } finally {
+   if(btn){ btn.innerText=oldText||'Sync now'; btn.disabled=false; }
  }
- if(!repos.length){
-   let r2=await fetch(`https://api.github.com/users/${user}/repos?per_page=100&sort=updated`,{headers});
-   repos=await r2.json();
- }
- reposCache=repos;
- await renderRepos(repos);
 }
 async function renderRepos(repos){
  let filter=document.getElementById('search').value.toLowerCase();
@@ -104,7 +112,7 @@ async function renderRepos(repos){
    htmlFiles.forEach(f=>{
      let pub=f.name.toLowerCase()=='index.html'?`https://${user}.github.io/${repo.name}/`:`https://${user}.github.io/${repo.name}/${f.name}`;
      if(!filter || f.name.toLowerCase().includes(filter) || repo.name.toLowerCase().includes(filter)){
-       grouped['/'].push({label:f.name, path:`${repo.name}/${f.name}`, url:pub, key:`${repo.name}/${f.name}`});
+       grouped['/'].push({label:f.name, path:`${repo.name}/${f.name}`, url:pub, key:`${repo.name}/${f.name}`, githubUrl:`https://github.com/${user}/${repo.name}/blob/main/${f.path}`, filePath:f.path, repo:repo.name});
        allLinks.push(pub);
      }
    });
@@ -115,7 +123,7 @@ async function renderRepos(repos){
      subHtml.forEach(file=>{
        let pub=file.name.toLowerCase()=='index.html'?`https://${user}.github.io/${repo.name}/${folder.path}/`:`https://${user}.github.io/${repo.name}/${folder.path}/${file.name}`;
        if(!filter || `${folder.path}/${file.name}`.toLowerCase().includes(filter) || repo.name.toLowerCase().includes(filter)){
-         grouped[folder.path].push({label:file.name, path:`${repo.name}/${folder.path}/${file.name}`, url:pub, key:`${repo.name}/${folder.path}/${file.name}`});
+         grouped[folder.path].push({label:file.name, path:`${repo.name}/${folder.path}/${file.name}`, url:pub, key:`${repo.name}/${folder.path}/${file.name}`, githubUrl:`https://github.com/${user}/${repo.name}/blob/main/${file.path}`, filePath:file.path, repo:repo.name});
          allLinks.push(pub);
        }
      });
@@ -162,7 +170,10 @@ async function renderRepos(repos){
              </div>
              <div class="flex items-center gap-1.5">
                <a href="${l.url}" target="_blank" class="text-[11px] bg-[#0d1117] text-white px-2.5 py-0.5 rounded-md hover:bg-black">OPEN</a>
+               <a href="${l.githubUrl}" target="_blank" class="text-[11px] border border-[#d0d7de] bg-[#f6f8fa] px-2.5 py-0.5 rounded-md hover:bg-[#eaeef2]">Github</a>
                <button onclick="copyLink('${l.url}')" class="text-[11px] border border-[#d0d7de] bg-white px-2 py-0.5 rounded-md hover:bg-[#f6f8fa]">Copy</button>
+               <button onclick="editFile(l.repo,l.filePath)" class="text-[11px] border border-[#d0d7de] bg-white px-2 py-0.5 rounded-md hover:bg-[#fff8c5]">Edit</button>
+               <button onclick="deleteFile(l.repo,l.filePath)" class="text-[11px] border border-[#d0d7de] bg-white px-2 py-0.5 rounded-md hover:bg-[#ffebe9]">Del</button>
                <button onclick="renameFile('${l.key}')" class="text-[11px] text-[#8b949e] hover:text-[#24292f] opacity-0 group-hover:opacity-100">✎</button>
              </div>
            </div>
@@ -248,7 +259,7 @@ document.getElementById('unlock').onclick=()=>{
  document.getElementById('lock').classList.add('hidden');
  document.getElementById('app').classList.remove('hidden');
  scanAll();
- setInterval(scanAll, 30000);
+ // no auto refresh - manual only
 };
 document.getElementById('scanBtn').onclick=scanAll;
 document.getElementById('search').addEventListener('input',()=>renderRepos(reposCache));
@@ -260,7 +271,55 @@ if(savedPin){
  document.getElementById('lock').classList.add('hidden');
  document.getElementById('app').classList.remove('hidden');
  scanAll();
- setInterval(scanAll, 30000);
+ // no auto refresh - manual only
+}
+</script>
+
+<div id="editModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+  <div class="bg-white rounded-md border w-full max-w-2xl">
+    <div class="px-4 py-2 border-b flex justify-between"><span id="editTitle" class="text-[13px] font-semibold">Edit</span><button onclick="closeModal()">X</button></div>
+    <div class="p-4"><div id="editPath" class="text-[11px] text-[#57606a] mb-2"></div><textarea id="editContent" class="w-full h-[400px] border rounded p-3 text-[12px] font-mono"></textarea></div>
+    <div class="px-4 py-2 border-t flex justify-end gap-2"><button onclick="closeModal()" class="border px-3 py-1 text-[12px] rounded">Cancel</button><button onclick="saveFile()" class="bg-[#2ea043] text-white px-3 py-1 text-[12px] rounded">Save</button></div>
+  </div>
+</div>
+<script>
+let curEdit={repo:null,path:null,sha:null};
+async function editFile(repo,filePath){
+ let token=localStorage.getItem('gh_token'); if(!token){alert('Need token');return;}
+ let res=await fetch(`https://api.github.com/repos/leha-os/${repo}/contents/${filePath}?ref=main`,{headers:getHeaders()});
+ if(!res.ok) res=await fetch(`https://api.github.com/repos/leha-os/${repo}/contents/${filePath}?ref=master`,{headers:getHeaders()});
+ if(!res.ok){alert('Fetch failed '+res.status);return;}
+ let data=await res.json();
+ let content=atob(data.content.replace(/\n/g,''));
+ curEdit={repo,path:filePath,sha:data.sha};
+ document.getElementById('editTitle').innerText=filePath;
+ document.getElementById('editPath').innerText=`leha-os/${repo}/${filePath}`;
+ document.getElementById('editContent').value=content;
+ document.getElementById('editModal').classList.remove('hidden');
+}
+function closeModal(){document.getElementById('editModal').classList.add('hidden');}
+async function saveFile(){
+ let txt=document.getElementById('editContent').value;
+ let b64=btoa(unescape(encodeURIComponent(txt)));
+ let res=await fetch(`https://api.github.com/repos/leha-os/${curEdit.repo}/contents/${curEdit.path}`,{method:'PUT',headers:{...getHeaders(),'Content-Type':'application/json'},body:JSON.stringify({message:`Edit ${curEdit.path} via links`,content:b64,sha:curEdit.sha})});
+ if(res.ok){alert('Saved');closeModal();scanAll();} else {alert('Failed '+(await res.text()));}
+}
+async function deleteFile(repo,filePath){
+ let token=localStorage.getItem('gh_token'); if(!token){alert('Need token');return;}
+ if(!confirm(`Delete ${repo}/${filePath}?`)) return;
+ let r=await fetch(`https://api.github.com/repos/leha-os/${repo}/contents/${filePath}?ref=main`,{headers:getHeaders()});
+ if(!r.ok) r=await fetch(`https://api.github.com/repos/leha-os/${repo}/contents/${filePath}?ref=master`,{headers:getHeaders()});
+ if(!r.ok){alert('Cannot get sha');return;}
+ let d=await r.json();
+ let del=await fetch(`https://api.github.com/repos/leha-os/${repo}/contents/${filePath}`,{method:'DELETE',headers:{...getHeaders(),'Content-Type':'application/json'},body:JSON.stringify({message:`Delete ${filePath}`,sha:d.sha})});
+ if(del.ok){alert('Deleted');scanAll();} else {alert('Delete failed '+(await del.text()));}
+}
+async function deleteFolder(repo,folder){
+ if(folder==='/'||folder===''){alert('Cannot delete root');return;}
+ if(!confirm(`Delete folder ${folder} in ${repo}? Will delete all files inside.`)) return;
+ let files=await fetchContents('leha-os',repo,folder);
+ for(let f of files){ if(f.type==='file'){ await deleteFile(repo,f.path); } }
+ alert('Done'); scanAll();
 }
 </script>
 </body>
