@@ -11,6 +11,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,san
 .file-row{border-left:2px solid transparent}
 .file-row:hover{border-left-color:#0969da;background:#f6f8fa}
 .file-row.selected{background:#fff8c5;border-left-color:#d4a72c}
+.dropdown{position:relative}
+.dropdown-menu{position:absolute;right:0;top:100%;margin-top:4px;background:white;border:1px solid #d0d7de;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,0.1);z-index:20;min-width:160px;overflow:hidden}
+.dropdown-menu button{display:block;width:100%;text-align:left;padding:8px 12px;font-size:11px;}
+.dropdown-menu button:hover{background:#f6f8fa}
 </style>
 </head>
 <body class="bg-white text-[#24292f] min-h-screen">
@@ -201,20 +205,28 @@ async function renderRepos(repos){
          ${files.map(l=>{
            let selId=l.repo+'::'+l.filePath;
            let isSel=selected.has(selId);
+           let displayName = customNames[l.key] || l.label;
+           let hasNote = !!customNames[l.key];
            return `
            <div data-sel="${selId}" class="file-row ${isSel?'selected':''} flex items-center justify-between pl-8 pr-3 py-1.5 text-[12px] group border-t border-[#f6f8fa]">
              <div class="flex items-center gap-2 min-w-0 flex-1">
                <input type="checkbox" ${isSel?'checked':''} onchange="toggleSelect('${l.repo}','${l.filePath}','${l.key}')" class="w-3 h-3">
                <span class="text-[11px] text-[#8b949e]">↳</span>
-               <span class="truncate" title="${l.path}">${l.label}</span>
-               ${customNames[l.key]?`<span class="ml-2 text-[10px] bg-[#fff8c5] px-1 rounded">📝 ${customNames[l.key]}</span>`:''}
+               <span class="truncate ${hasNote?'font-medium text-[#0969da]':''}" title="${l.path} - double click để đổi tên dễ nhớ (chỉ lưu máy bạn)" ondblclick="editNote('${l.key.replace(/'/g, "\'")}')">${displayName}</span>
+               ${hasNote?`<span class="ml-1 text-[9px] bg-[#ddf4ff] text-[#0969da] px-1 rounded">note</span>`:''}
              </div>
              <div class="flex items-center gap-1">
-               <a href="${l.url}" target="_blank" class="text-[11px] bg-[#0d1117] text-white px-2 py-0.5 rounded-md">OPEN</a>
-               <a href="${l.githubUrl}" target="_blank" class="text-[11px] border bg-[#f6f8fa] px-2 py-0.5 rounded-md">Github</a>
-               <button onclick="copyLink('${l.url}')" class="text-[11px] border bg-white px-2 py-0.5 rounded-md">Copy</button>
-               <button onclick="editFile('${l.repo}','${l.filePath}')" class="text-[11px] border bg-[#fff8c5] px-2 py-0.5 rounded-md">Edit Real</button>
-               <button onclick="deleteFile('${l.repo}','${l.filePath}')" class="text-[11px] border bg-white px-2 py-0.5 rounded-md hover:bg-[#ffebe9]">Del</button>
+               <a href="${l.url}" target="_blank" class="text-[11px] bg-[#0d1117] text-white px-2.5 py-1 rounded-md">OPEN</a>
+               <button onclick="copyLink('${l.url}')" class="text-[11px] border bg-white px-2.5 py-1 rounded-md">Copy</button>
+               <div class="dropdown">
+                 <button onclick="toggleMenu('${selId}')" class="text-[11px] border bg-white px-2 py-1 rounded-md">⋯</button>
+                 <div id="menu-${selId}" class="dropdown-menu hidden">
+                   <button onclick="editNote('${l.key.replace(/'/g, "\'")}');closeAllMenus()">📝 Edit ghi chú (lưu máy bạn) - đổi tên dễ nhớ</button>
+                   <button onclick="editFile('${l.repo}','${l.filePath}');closeAllMenus()">✏️ Edit Real (sửa file thật trên Github)</button>
+                   <button onclick="window.open('${l.githubUrl}','_blank');closeAllMenus()">🔗 Github</button>
+                   <button onclick="deleteFile('${l.repo}','${l.filePath}');closeAllMenus()" class="text-[#cf222e]">🗑️ Del (xóa thật)</button>
+                 </div>
+               </div>
              </div>
            </div>
            `;
@@ -253,6 +265,33 @@ function toggleFolder(key){
  body.classList.toggle('hidden');
  localStorage.setItem('collapsed_folder_'+key, isHidden?'0':'1');
 }
+
+function editNote(key){
+ let cur=customNames[key]||'';
+ let nv=prompt('Đổi tên hiển thị dễ nhớ (chỉ lưu ở máy bạn, không đổi file thật trên Github):\nVí dụ: Khách A - chốt v1, Landing chốt, v.v...\n\nĐể trống để xóa ghi chú:', cur);
+ if(nv===null) return;
+ if(nv.trim()===''){
+   delete customNames[key];
+ } else {
+   customNames[key]=nv.trim();
+ }
+ localStorage.setItem('customNames', JSON.stringify(customNames));
+ renderRepos(reposCache);
+}
+function toggleMenu(id){
+ let menu=document.getElementById('menu-'+id);
+ if(!menu) return;
+ let isHidden=menu.classList.contains('hidden');
+ closeAllMenus();
+ if(isHidden) menu.classList.remove('hidden');
+}
+function closeAllMenus(){
+ document.querySelectorAll('.dropdown-menu').forEach(m=>m.classList.add('hidden'));
+}
+document.addEventListener('click', function(e){
+ if(!e.target.closest('.dropdown')) closeAllMenus();
+});
+
 function copyLink(url){ navigator.clipboard.writeText(url); }
 function collapseAll(){
  document.querySelectorAll('.repo-body').forEach(b=>b.classList.add('hidden'));
