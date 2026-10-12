@@ -59,10 +59,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,san
 <!-- bulk action bar -->
 <div id="bulkBar" class="hidden border border-[#d4a72c] bg-[#fff8c5] rounded-md px-3 py-2 mb-3 flex flex-wrap items-center gap-2 text-[12px]">
 <span id="bulkCount" class="font-medium">0 selected</span>
-<button onclick="moveSelected()" class="bg-[#0d1117] text-white px-3 py-1 rounded-md">Move (sync thật)</button>
+<button onclick="moveSelected()" class="bg-[#0d1117] text-white px-3 py-1 rounded-md">Move</button>
 <button onclick="deleteSelected()" class="border bg-white px-3 py-1 rounded-md hover:bg-[#ffebe9]">Delete selected</button>
 <button onclick="clearSelection()" class="text-[#57606a] px-2">Clear</button>
-<span class="text-[11px] text-[#57606a]">→ chọn nhiều file rồi Move sẽ tạo file mới ở chỗ mới + xóa chỗ cũ trên Github thật</span>
+
 </div>
 
 <div class="border border-[#d0d7de] rounded-md overflow-hidden" id="out"></div>
@@ -199,7 +199,7 @@ async function renderRepos(repos){
          <span class="text-[13px]">${folder==='/'?'🗂️':'📁'}</span>
          <span class="text-[12px] font-medium">${folderLabel}</span>
          <span class="text-[10px] text-[#8b949e]">${files.length} files</span>
-         ${folder!=='/' ? (grouped[folder].hasIndex ? `<a href="https://${user}.github.io/${repo.name}/${folder}/" target="_blank" class="ml-2 text-[10px] text-[#0969da] hover:underline" onclick="event.stopPropagation()">/${folder}/</a>` : ``) : ''}
+         ${folder!=='/' ? (grouped[folder].hasIndex ? `<a href="https://${user}.github.io/${repo.name}/${folder}/" target="_blank" class="ml-2 text-[10px] text-[#57606a] hover:text-[#24292f] hover:underline" onclick="event.stopPropagation()">/${folder}/</a>` : ``) : ''}
        </div>
        <div class="folder-body ${fCollapsed?'hidden':''}" id="folder-${CSS.escape(folderKey)}">
          ${files.map(l=>{
@@ -212,8 +212,8 @@ async function renderRepos(repos){
              <div class="flex items-center gap-2 min-w-0 flex-1">
                <input type="checkbox" ${isSel?'checked':''} onchange="toggleSelect('${l.repo}','${l.filePath}','${l.key}')" class="w-3 h-3">
                <span class="text-[11px] text-[#8b949e]">↳</span>
-               <span class="truncate ${hasNote?'font-medium text-[#0969da]':''}" title="${l.path} - double click để đổi tên dễ nhớ (chỉ lưu máy bạn)" ondblclick="editNote('${l.key.replace(/'/g, "\'")}')">${displayName}</span>
-               ${hasNote?`<span class="ml-1 text-[9px] bg-[#ddf4ff] text-[#0969da] px-1 rounded">note</span>`:''}
+               <span class="truncate ${hasNote?'font-medium text-[#24292f]':''}" title="${l.path} - double click để đổi tên dễ nhớ (chỉ lưu máy bạn)" ondblclick="editNote('${l.key.replace(/'/g, "\'")}')">${displayName}</span>
+               ${hasNote?`<span class="ml-1 text-[9px] bg-[#f6f8fa] text-[#57606a] px-1 rounded">note</span>`:''}
              </div>
              <div class="flex items-center gap-1">
                <a href="${l.url}" target="_blank" class="text-[11px] bg-[#0d1117] text-white px-2.5 py-1 rounded-md">OPEN</a>
@@ -238,10 +238,10 @@ async function renderRepos(repos){
    section.innerHTML=`
      <div class="repo-header px-3 py-2 bg-[#f6f8fa] flex items-center gap-2 cursor-pointer select-none" onclick="toggleRepo('${repo.name}')">
        <span class="text-[12px]">${repoCollapsed?'▸':'▾'}</span>
-       <span class="font-semibold text-[13px] text-[#0969da]">${displayRepoName}</span>
+       <span class="font-semibold text-[13px] text-[#24292f]">${displayRepoName}</span>
        ${repo.private?'<span class="text-[10px] border rounded-full px-1.5">private</span>':''}
        
-       ${grouped['/'].hasIndex ? `<a href="https://${user}.github.io/${repo.name}/" target="_blank" class="ml-auto text-[11px] text-[#0969da] hover:underline" onclick="event.stopPropagation()">/${user}.github.io/${repo.name}/</a>` : ``}
+       ${grouped['/'].hasIndex ? `<a href="https://${user}.github.io/${repo.name}/" target="_blank" class="ml-auto text-[11px] text-[#57606a] hover:text-[#24292f] hover:underline" onclick="event.stopPropagation()">/${user}.github.io/${repo.name}/</a>` : ``}
      </div>
      <div class="repo-body ${repoCollapsed?'hidden':''}" id="body-${repo.name}">
        ${foldersHtml || `<div class="pl-8 pr-3 py-2 text-[11px] text-[#8b949e]">No HTML files (only files with index.html will show usable link)</div>`}
@@ -366,7 +366,8 @@ Nhập repo đích (để trống = giữ nguyên repo cũ, nếu chọn nhiều
 }
 async function deleteSelected(){
  if(selected.size===0) return;
- if(!confirm(`Xóa ${selected.size} file đã chọn trên Github thật? Không khôi phục được.`)) return;
+ const okDel=await customConfirm(`Xóa ${selected.size} file đã chọn? Không khôi phục được.`, `Xóa ${selected.size} files`);
+ if(!okDel) return;
  for(let [id, info] of selected){
    await deleteFile(info.repo, info.path, true);
  }
@@ -399,6 +400,82 @@ if(savedPin){
 }
 </script>
 
+
+
+<!-- Beautiful custom modal -->
+<div id="customModal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 z-[60]">
+  <div class="bg-white rounded-xl border border-[#d0d7de] shadow-xl w-full max-w-[380px] overflow-hidden animate-[fadeIn_0.15s]">
+    <div class="px-5 pt-5 pb-3">
+      <h3 id="customModalTitle" class="text-[14px] font-semibold text-[#24292f]">Xác nhận</h3>
+      <p id="customModalMsg" class="text-[13px] text-[#57606a] mt-2 leading-5">Bạn có chắc?</p>
+      <div id="customModalInputWrap" class="hidden mt-3">
+        <input id="customModalInput" type="text" class="w-full border border-[#d0d7de] rounded-md px-3 py-2 text-[13px] focus:outline-none focus:border-[#0969da] focus:ring-1 focus:ring-[#0969da]" placeholder="">
+      </div>
+    </div>
+    <div class="px-5 py-3 bg-[#f6f8fa] border-t flex justify-end gap-2">
+      <button id="customModalCancel" class="px-4 py-1.5 text-[12px] border bg-white rounded-md hover:bg-[#f6f8fa]">Hủy</button>
+      <button id="customModalOk" class="px-4 py-1.5 text-[12px] bg-[#0d1117] text-white rounded-md hover:bg-black">OK</button>
+    </div>
+  </div>
+</div>
+<style>
+@keyframes fadeIn { from { opacity:0; transform: scale(0.96); } to { opacity:1; transform: scale(1); } }
+</style>
+<script>
+function showCustomModal({title, msg, input, placeholder, okText, danger}){
+ return new Promise(resolve=>{
+  const modal=document.getElementById('customModal');
+  document.getElementById('customModalTitle').innerText=title||'Xác nhận';
+  document.getElementById('customModalMsg').innerText=msg||'';
+  const inputWrap=document.getElementById('customModalInputWrap');
+  const inputEl=document.getElementById('customModalInput');
+  const okBtn=document.getElementById('customModalOk');
+  const cancelBtn=document.getElementById('customModalCancel');
+  if(input){
+    inputWrap.classList.remove('hidden');
+    inputEl.value=input;
+    inputEl.placeholder=placeholder||'';
+    setTimeout(()=>inputEl.focus(),100);
+    inputEl.select();
+  } else {
+    inputWrap.classList.add('hidden');
+  }
+  okBtn.innerText=okText||'OK';
+  okBtn.className = danger ? 'px-4 py-1.5 text-[12px] bg-[#cf222e] text-white rounded-md hover:bg-[#a40e26]' : 'px-4 py-1.5 text-[12px] bg-[#0d1117] text-white rounded-md hover:bg-black';
+  modal.classList.remove('hidden');
+  function cleanup(result){
+    modal.classList.add('hidden');
+    okBtn.removeEventListener('click', onOk);
+    cancelBtn.removeEventListener('click', onCancel);
+    modal.removeEventListener('click', onOutside);
+    inputEl.removeEventListener('keydown', onKey);
+    resolve(result);
+  }
+  function onOk(){
+    if(inputWrap.classList.contains('hidden')) cleanup(true);
+    else cleanup(inputEl.value);
+  }
+  function onCancel(){ cleanup(null); }
+  function onOutside(e){ if(e.target===modal) cleanup(null); }
+  function onKey(e){
+    if(e.key==='Enter') onOk();
+    if(e.key==='Escape') onCancel();
+  }
+  okBtn.addEventListener('click', onOk);
+  cancelBtn.addEventListener('click', onCancel);
+  modal.addEventListener('click', onOutside);
+  inputEl.addEventListener('keydown', onKey);
+ });
+}
+async function customConfirm(msg, title){
+  const r=await showCustomModal({title:title||'Xác nhận', msg, okText:'Xóa', danger:true});
+  return !!r;
+}
+async function customPrompt(msg, def, placeholder){
+  const r=await showCustomModal({title:'Nhập thông tin', msg, input:def||'', placeholder:placeholder||'', okText:'OK', danger:false});
+  return r; // string or null
+}
+</script>
 
 <div id="editModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center p-2 z-50">
   <div class="bg-white rounded-lg border w-full max-w-4xl max-h-[95vh] flex flex-col">
@@ -485,7 +562,7 @@ async function saveFile(){
 }
 async function deleteFile(repo,filePath, silent){
  let token=localStorage.getItem('gh_token'); if(!token){alert('Need token');return;}
- if(!silent && !confirm('Delete '+repo+'/'+filePath+'?')) return;
+ if(!silent){ const ok=await customConfirm('Xóa file '+repo+'/'+filePath+'? Không khôi phục được.', 'Xóa file'); if(!ok) return; }
  let r=await fetch('https://api.github.com/repos/leha-os/'+repo+'/contents/'+filePath+'?ref=main',{headers:getHeaders()});
  if(!r.ok) r=await fetch('https://api.github.com/repos/leha-os/'+repo+'/contents/'+filePath+'?ref=master',{headers:getHeaders()});
  if(!r.ok){if(!silent) alert('Cannot get sha');return;}
