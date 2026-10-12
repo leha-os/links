@@ -17,7 +17,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,san
 <div class="github-header text-white px-4 py-3 flex items-center justify-between">
 <div class="flex items-center gap-3">
 <svg height="32" width="32" viewBox="0 0 16 16" fill="white"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.04-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"></path></svg>
-<span class="font-semibold text-sm">leha-os / links <span class="ml-2 text-[11px] bg-[#1f6feb] px-2 py-0.5 rounded-full">PRIVATE</span></span>
+<a href="https://github.com/leha-os?tab=repositories" target="_blank" class="font-semibold text-sm hover:underline">LEHA Repo <span class="ml-2 text-[11px] bg-[#1f6feb] px-2 py-0.5 rounded-full">PRIVATE</span></a>
 </div>
 <div class="flex items-center gap-2">
 <span id="syncStatus" class="text-[11px] text-[#8b949e]">manual sync</span>
@@ -41,7 +41,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,san
 <div class="max-w-[1024px] mx-auto px-4 py-4">
 <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
 <div class="flex items-center gap-2">
-<h2 class="font-semibold text-[14px]">Repositories</h2>
+<!-- Repositories title removed -->
 <span id="count" class="hidden">0 links</span>
 </div>
 <div class="flex flex-wrap gap-2 items-center">
@@ -141,25 +141,37 @@ async function renderRepos(repos){
    let htmlFiles=root.filter(f=>f.type==='file' && f.name.toLowerCase().endsWith('.html'));
    let folders=root.filter(f=>f.type==='dir');
    let grouped={}; grouped['/']=[];
+   let hasRootIndex = htmlFiles.some(f=>f.name.toLowerCase()==='index.html');
    htmlFiles.forEach(f=>{
      let pub=f.name.toLowerCase()=='index.html'?`https://${user}.github.io/${repo.name}/`:`https://${user}.github.io/${repo.name}/${f.name}`;
+     let isIndex = f.name.toLowerCase()==='index.html';
+     // Only show index or files that are directly usable, but repo root link only if hasRootIndex
      if(!filter || f.name.toLowerCase().includes(filter) || repo.name.toLowerCase().includes(filter)){
-       grouped['/'].push({label:f.name, path:`${repo.name}/${f.name}`, url:pub, key:`${repo.name}/${f.name}`, githubUrl:`https://github.com/${user}/${repo.name}/blob/main/${f.path}`, filePath:f.path, repo:repo.name});
-       allLinks.push(pub);
+       // If user wants only index-usable, we still show v1.html files because they are usable themselves
+       // But we will hide repo header link if no root index (handled below)
+       grouped['/'].push({label:f.name, path:`${repo.name}/${f.name}`, url:pub, key:`${repo.name}/${f.name}`, githubUrl:`https://github.com/${user}/${repo.name}/blob/main/${f.path}`, filePath:f.path, repo:repo.name, isIndex});
+       if(isIndex || f.name.toLowerCase().match(/^v\d+\.html$/)) { allLinks.push(pub); } else { allLinks.push(pub); }
      }
    });
    for(let folder of folders){
      let sub=await fetchContents(user, repo.name, folder.path);
      let subHtml=sub.filter(s=>s.type==='file' && s.name.toLowerCase().endsWith('.html'));
+     let hasFolderIndex = subHtml.some(f=>f.name.toLowerCase()==='index.html');
      if(!grouped[folder.path]) grouped[folder.path]=[];
      subHtml.forEach(file=>{
        let pub=file.name.toLowerCase()=='index.html'?`https://${user}.github.io/${repo.name}/${folder.path}/`:`https://${user}.github.io/${repo.name}/${folder.path}/${file.name}`;
+       let isIndex = file.name.toLowerCase()==='index.html';
        if(!filter || `${folder.path}/${file.name}`.toLowerCase().includes(filter) || repo.name.toLowerCase().includes(filter)){
-         grouped[folder.path].push({label:file.name, path:`${repo.name}/${folder.path}/${file.name}`, url:pub, key:`${repo.name}/${folder.path}/${file.name}`, githubUrl:`https://github.com/${user}/${repo.name}/blob/main/${file.path}`, filePath:file.path, repo:repo.name});
+         // Store hasFolderIndex info on each file for folder header rendering
+         grouped[folder.path].push({label:file.name, path:`${repo.name}/${folder.path}/${file.name}`, url:pub, key:`${repo.name}/${folder.path}/${file.name}`, githubUrl:`https://github.com/${user}/${repo.name}/blob/main/${file.path}`, filePath:file.path, repo:repo.name, isIndex, hasFolderIndex});
          allLinks.push(pub);
        }
      });
+     // If folder has no html at all, remove it later; but if it has no index, we still keep it to show its files (v1.html etc) - however its own /folder/ link is not usable
+     grouped[folder.path].hasIndex = hasFolderIndex;
    }
+   grouped['/'].hasIndex = hasRootIndex;
+
    let folderNames=Object.keys(grouped).filter(k=>grouped[k].length>0);
    if(folderNames.length===0 && filter) continue;
    let displayRepoName = repo.name;
@@ -183,6 +195,7 @@ async function renderRepos(repos){
          <span class="text-[13px]">${folder==='/'?'🗂️':'📁'}</span>
          <span class="text-[12px] font-medium">${folderLabel}</span>
          <span class="text-[10px] text-[#8b949e]">${files.length} files</span>
+         ${folder!=='/' ? (grouped[folder].hasIndex ? `<a href="https://${user}.github.io/${repo.name}/${folder}/" target="_blank" class="ml-2 text-[10px] bg-[#ddf4ff] text-[#0969da] border px-1.5 py-0 rounded" onclick="event.stopPropagation()">/${folder}/ → OPEN</a>` : `<span class="ml-2 text-[10px] text-[#cf222e] border border-dashed px-1.5 py-0 rounded" title="Folder này không có index.html nên link /${folder}/ sẽ 404">no index → 404</span>`) : ''}
        </div>
        <div class="folder-body ${fCollapsed?'hidden':''}" id="folder-${CSS.escape(folderKey)}">
          ${files.map(l=>{
@@ -216,7 +229,7 @@ async function renderRepos(repos){
        <span class="font-semibold text-[13px] text-[#0969da]">${displayRepoName}</span>
        ${repo.private?'<span class="text-[10px] border rounded-full px-1.5">private</span>':''}
        
-       <a href="https://${user}.github.io/${repo.name}/" target="_blank" class="ml-auto text-[11px] text-[#57606a] hover:text-[#0969da]" onclick="event.stopPropagation()">/${repo.name}/ →</a>
+       ${grouped['/'].hasIndex ? `<a href="https://${user}.github.io/${repo.name}/" target="_blank" class="ml-auto text-[11px] bg-[#ddf4ff] text-[#0969da] border border-[#54aeff] px-2 py-0.5 rounded-md" onclick="event.stopPropagation()">/${repo.name}/ → OPEN (index)</a>` : `<span class="ml-auto text-[11px] text-[#8b949e] border border-dashed px-2 py-0.5 rounded-md" title="Không có index.html nên /${repo.name}/ sẽ 404 - chỉ dùng link file v1/v2 bên trong">no index → 404</span>`}
      </div>
      <div class="repo-body ${repoCollapsed?'hidden':''}" id="body-${repo.name}">
        ${foldersHtml || `<div class="pl-8 pr-3 py-2 text-[11px] text-[#8b949e]">No HTML files (only files with index.html will show usable link)</div>`}
@@ -347,43 +360,99 @@ if(savedPin){
 }
 </script>
 
-<div id="editModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-  <div class="bg-white rounded-md border w-full max-w-2xl">
-    <div class="px-4 py-2 border-b flex justify-between"><span id="editTitle" class="text-[13px] font-semibold">Edit</span><button onclick="closeModal()">X</button></div>
-    <div class="p-4"><div id="editPath" class="text-[11px] text-[#57606a] mb-2"></div><textarea id="editContent" class="w-full h-[400px] border rounded p-3 text-[12px] font-mono"></textarea></div>
-    <div class="px-4 py-2 border-t flex justify-end gap-2"><button onclick="closeModal()" class="border px-3 py-1 text-[12px] rounded">Cancel</button><button onclick="saveFile()" class="bg-[#2ea043] text-white px-3 py-1 text-[12px] rounded">Save</button></div>
+
+<div id="editModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center p-2 z-50">
+  <div class="bg-white rounded-lg border w-full max-w-4xl max-h-[95vh] flex flex-col">
+    <div class="px-4 py-3 border-b flex justify-between items-center bg-[#f6f8fa] rounded-t-lg">
+      <div><span id="editTitle" class="text-[13px] font-semibold">Edit</span><div id="editPath" class="text-[11px] text-[#57606a]"></div></div>
+      <button onclick="closeModal()" class="w-7 h-7 rounded-full hover:bg-[#d0d7de] flex items-center justify-center">✕</button>
+    </div>
+    <div class="px-4 py-3 border-b bg-[#fff8c5] flex flex-wrap gap-2 items-center text-[12px]">
+      <span class="font-semibold">⚡ Quick Replace:</span>
+      <button onclick="applyBGConfig()" class="bg-[#0d1117] text-white px-4 py-2 rounded-md font-medium">BG_CONFIG → radial thở nhẹ + noise + hạt bụi siêu chậm</button>
+      <button onclick="applyHeroLogo()" class="bg-white border px-4 py-2 rounded-md">HERO_CONFIG → logo</button>
+      <span class="text-[11px] text-[#57606a]">Fix UTF-8 xong, không còn lỗi font</span>
+    </div>
+    <div class="p-3 flex-1 overflow-hidden flex flex-col">
+      <textarea id="editContent" class="w-full flex-1 min-h-[420px] border rounded-md p-3 text-[12px] font-mono"></textarea>
+    </div>
+    <div class="px-4 py-3 border-t flex justify-between items-center bg-[#f6f8fa] rounded-b-lg">
+      <span class="text-[11px] text-[#57606a]">Save sẽ sync thật lên Github</span>
+      <div class="flex gap-2">
+        <button onclick="closeModal()" class="border bg-white px-4 py-2 text-[12px] rounded-md">Cancel</button>
+        <button onclick="saveFile()" class="bg-[#2ea043] text-white px-8 py-2.5 text-[13px] font-bold rounded-md">💾 REPLACE TO - Save thật</button>
+      </div>
+    </div>
   </div>
 </div>
 <script>
 let curEdit={repo:null,path:null,sha:null};
+function b64DecodeUtf8(b64){
+  b64=b64.replace(/\n/g,'').trim();
+  try{
+    const binary=atob(b64);
+    const bytes=Uint8Array.from(binary, c=>c.charCodeAt(0));
+    return new TextDecoder('utf-8').decode(bytes);
+  }catch(e){
+    return atob(b64);
+  }
+}
+function b64EncodeUtf8(str){
+  const bytes=new TextEncoder().encode(str);
+  let binary='';
+  bytes.forEach(b=>binary+=String.fromCharCode(b));
+  return btoa(binary);
+}
 async function editFile(repo,filePath){
- let token=localStorage.getItem('gh_token'); if(!token){alert('Need token');return;}
- let res=await fetch(`https://api.github.com/repos/leha-os/${repo}/contents/${filePath}?ref=main`,{headers:getHeaders()});
- if(!res.ok) res=await fetch(`https://api.github.com/repos/leha-os/${repo}/contents/${filePath}?ref=master`,{headers:getHeaders()});
+ let token=localStorage.getItem('gh_token'); if(!token){alert('Can token');return;}
+ let res=await fetch('https://api.github.com/repos/leha-os/'+repo+'/contents/'+filePath+'?ref=main',{headers:getHeaders()});
+ if(!res.ok) res=await fetch('https://api.github.com/repos/leha-os/'+repo+'/contents/'+filePath+'?ref=master',{headers:getHeaders()});
  if(!res.ok){alert('Fetch failed '+res.status);return;}
  let data=await res.json();
- let content=atob(data.content.replace(/\n/g,''));
+ let content=b64DecodeUtf8(data.content);
  curEdit={repo,path:filePath,sha:data.sha};
  document.getElementById('editTitle').innerText=filePath;
- document.getElementById('editPath').innerText=`leha-os/${repo}/${filePath}`;
+ document.getElementById('editPath').innerText='leha-os/'+repo+'/'+filePath;
  document.getElementById('editContent').value=content;
  document.getElementById('editModal').classList.remove('hidden');
+}
+function applyBGConfig(){
+  let ta=document.getElementById('editContent');
+  let newBG = "const BG_CONFIG = {\n  type: \"radial_breath\",\n  radial: {\n    colors: [\"#0f172a\", \"#1e293b\", \"#334155\"],\n    breatheDuration: 8000,\n    scale: [1, 1.08, 1],\n    opacity: 0.6\n  },\n  noise: {\n    enabled: true,\n    opacity: 0.03,\n    size: 200\n  },\n  dust: {\n    enabled: true,\n    count: 40,\n    speed: 0.15,\n    size: [1, 2.5],\n    opacity: [0.1, 0.4],\n    drift: true\n  }\n};";
+  let old=ta.value;
+  if(old.indexOf('BG_CONFIG')!==-1){
+    ta.value = old.replace(/const\s+BG_CONFIG\s*=\s*\{[\s\S]*?\n\};/, newBG);
+    if(ta.value===old) ta.value = old.replace(/BG_CONFIG[\s\S]*?\};/, newBG.replace('const ',''));
+  } else {
+    ta.value = newBG + "\n\n" + old;
+  }
+}
+function applyHeroLogo(){
+  let ta=document.getElementById('editContent');
+  let newHero = "const HERO_CONFIG = {\n  type: \"logo\",\n  logo: {\n    src: \"/assets/logo.svg\",\n    width: 180,\n    height: 180,\n    animate: \"float_gentle\"\n  },\n  centered: true\n};";
+  let old=ta.value;
+  if(old.indexOf('HERO_CONFIG')!==-1){
+    ta.value = old.replace(/const\s+HERO_CONFIG\s*=\s*\{[\s\S]*?\n\};/, newHero);
+    if(ta.value===old) ta.value = old.replace(/HERO_CONFIG[\s\S]*?\};/, newHero.replace('const ',''));
+  } else {
+    ta.value = newHero + "\n\n" + old;
+  }
 }
 function closeModal(){document.getElementById('editModal').classList.add('hidden');}
 async function saveFile(){
  let txt=document.getElementById('editContent').value;
- let b64=btoa(unescape(encodeURIComponent(txt)));
- let res=await fetch(`https://api.github.com/repos/leha-os/${curEdit.repo}/contents/${curEdit.path}`,{method:'PUT',headers:{...getHeaders(),'Content-Type':'application/json'},body:JSON.stringify({message:`Edit ${curEdit.path} via links`,content:b64,sha:curEdit.sha})});
+ let b64=b64EncodeUtf8(txt);
+ let res=await fetch('https://api.github.com/repos/leha-os/'+curEdit.repo+'/contents/'+curEdit.path,{method:'PUT',headers:{...getHeaders(),'Content-Type':'application/json'},body:JSON.stringify({message:'Edit '+curEdit.path+' via links - fix UTF8 + BG/HERO',content:b64,sha:curEdit.sha})});
  if(res.ok){alert('Saved');closeModal();scanAll();} else {alert('Failed '+(await res.text()));}
 }
 async function deleteFile(repo,filePath, silent){
  let token=localStorage.getItem('gh_token'); if(!token){alert('Need token');return;}
- if(!silent && !confirm(`Delete ${repo}/${filePath}?`)) return;
- let r=await fetch(`https://api.github.com/repos/leha-os/${repo}/contents/${filePath}?ref=main`,{headers:getHeaders()});
- if(!r.ok) r=await fetch(`https://api.github.com/repos/leha-os/${repo}/contents/${filePath}?ref=master`,{headers:getHeaders()});
+ if(!silent && !confirm('Delete '+repo+'/'+filePath+'?')) return;
+ let r=await fetch('https://api.github.com/repos/leha-os/'+repo+'/contents/'+filePath+'?ref=main',{headers:getHeaders()});
+ if(!r.ok) r=await fetch('https://api.github.com/repos/leha-os/'+repo+'/contents/'+filePath+'?ref=master',{headers:getHeaders()});
  if(!r.ok){if(!silent) alert('Cannot get sha');return;}
  let d=await r.json();
- let del=await fetch(`https://api.github.com/repos/leha-os/${repo}/contents/${filePath}`,{method:'DELETE',headers:{...getHeaders(),'Content-Type':'application/json'},body:JSON.stringify({message:`Delete ${filePath}`,sha:d.sha})});
+ let del=await fetch('https://api.github.com/repos/leha-os/'+repo+'/contents/'+filePath,{method:'DELETE',headers:{...getHeaders(),'Content-Type':'application/json'},body:JSON.stringify({message:'Delete '+filePath,sha:d.sha})});
  if(del.ok){if(!silent) {alert('Deleted'); scanAll();}} else {if(!silent) alert('Delete failed '+(await del.text()));}
 }
 </script>
